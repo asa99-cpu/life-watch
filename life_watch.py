@@ -2,10 +2,9 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
 import time
-from sidebar import sidebar_inputs  # Import sidebar inputs
-import matplotlib.animation as animation
+from sidebar import sidebar_inputs  # Import the sidebar module
 
-# Function to calculate time fractions for year, month, day, and minute
+# Function to calculate time fractions
 def get_time_fractions():
     now = time.localtime()
 
@@ -30,82 +29,84 @@ def get_time_fractions():
 
     return year_fraction, month_fraction, hour_fraction, minute_fraction
 
-# Optimized function to draw the life watch
-def plot_life_watch(year_fraction, month_fraction, hour_fraction, minute_fraction, ax):
+
+# Function to draw the life watch
+def plot_life_watch(year_fraction, month_fraction, hour_fraction, minute_fraction):
+    fig, ax = plt.subplots(figsize=(8, 8))
     ax.set_aspect('equal')
     ax.set_xlim(-1.2, 1.2)
     ax.set_ylim(-1.2, 1.2)
     ax.axis('off')
 
-    # Draw the clock outline once
+    # Draw the clock outline
     circle = plt.Circle((0, 0), 1, color='black', fill=False, lw=2)
     ax.add_artist(circle)
 
-    # Draw clock numbers (12, 3, 6, 9)
+    # Add clock numbers (12, 3, 6, 9 as major markers)
     for i in range(12):
-        angle = np.pi / 2 - i * np.pi / 6
+        angle = np.pi / 2 - i * np.pi / 6  # Adjust for clockwise rotation
         x, y = 0.9 * np.cos(angle), 0.9 * np.sin(angle)
         ax.text(x, y, str(i if i != 0 else 12), ha='center', va='center', fontsize=14, fontweight='bold')
 
-    # Draw ticks for seconds and minutes only
+    # Draw ticks for seconds and minutes
     for i in range(60):
         angle = np.pi / 2 - i * np.pi / 30
         x1, y1 = np.cos(angle), np.sin(angle)
         x2, y2 = 0.95 * x1, 0.95 * y1
         ax.plot([x1, x2], [y1, y2], color='black', lw=0.5)
 
-    # Plot hands for year, month, day, and minute progress
-    ax.plot([0, 0.6 * np.cos(np.pi / 2 - 2 * np.pi * year_fraction)], 
-            [0, 0.6 * np.sin(np.pi / 2 - 2 * np.pi * year_fraction)], 
-            color='red', lw=3, label='Year Progress')
+    # Year hand (longest, outermost)
+    theta_year = np.pi / 2 - 2 * np.pi * year_fraction
+    ax.plot([0, 0.6 * np.cos(theta_year)], [0, 0.6 * np.sin(theta_year)], color='red', lw=3, label='Year Progress')
 
-    ax.plot([0, 0.5 * np.cos(np.pi / 2 - 2 * np.pi * month_fraction)], 
-            [0, 0.5 * np.sin(np.pi / 2 - 2 * np.pi * month_fraction)], 
-            color='blue', lw=3, label='Month Progress')
+    # Month hand
+    theta_month = np.pi / 2 - 2 * np.pi * month_fraction
+    ax.plot([0, 0.5 * np.cos(theta_month)], [0, 0.5 * np.sin(theta_month)], color='blue', lw=3, label='Month Progress')
 
-    ax.plot([0, 0.4 * np.cos(np.pi / 2 - 2 * np.pi * hour_fraction)], 
-            [0, 0.4 * np.sin(np.pi / 2 - 2 * np.pi * hour_fraction)], 
-            color='green', lw=3, label='Day Progress')
+    # Day hand
+    theta_day = np.pi / 2 - 2 * np.pi * hour_fraction
+    ax.plot([0, 0.4 * np.cos(theta_day)], [0, 0.4 * np.sin(theta_day)], color='green', lw=3, label='Day Progress')
 
-    ax.plot([0, 0.3 * np.cos(np.pi / 2 - 2 * np.pi * minute_fraction)], 
-            [0, 0.3 * np.sin(np.pi / 2 - 2 * np.pi * minute_fraction)], 
-            color='purple', lw=3, label='Minute Progress')
+    # Minute hand
+    theta_minute = np.pi / 2 - 2 * np.pi * minute_fraction
+    ax.plot([0, 0.3 * np.cos(theta_minute)], [0, 0.3 * np.sin(theta_minute)], color='purple', lw=3, label='Minute Progress')
 
-    # Add legend to explain colors
+    # Add a legend
     ax.legend(loc="upper right", fontsize=10)
 
-# Main application logic
+    return fig
+
+
+# Main application
 st.title('Life Watch: Real-Time Day, Month, and Year Progress')
 
 # Get inputs from the sidebar
 expected_lifespan, current_age = sidebar_inputs()
 
-# Show life statistics
-remaining_years = expected_lifespan - current_age
-st.write(f"You have lived {current_age} years.")
-st.write(f"You have {remaining_years} years remaining.")
-
-# Add a button to start the Life Watch
 if st.button('Start Life Watch'):
-    # Placeholder for the watch
+    remaining_years = expected_lifespan - current_age
+    st.write(f"You have lived {current_age} years.")
+    st.write(f"You have {remaining_years} years remaining.")
+
+    # Static Watch (Initial Watch)
+    year_fraction, month_fraction, hour_fraction, minute_fraction = get_time_fractions()
+    static_watch = plot_life_watch(year_fraction, month_fraction, hour_fraction, minute_fraction)
+    st.subheader('Static Life Watch')
+    st.pyplot(static_watch)
+
+    # Animated Watch (Real-time Watch)
     watch_placeholder = st.empty()
 
-    # Create figure and axis for animation
-    fig, ax = plt.subplots(figsize=(8, 8))
-
-    # Define update function for the animation
-    def update(frame):
-        # Get time fractions
+    # Real-time updates for animation
+    while True:
+        # Get time fractions for real-time animation
         year_fraction, month_fraction, hour_fraction, minute_fraction = get_time_fractions()
 
-        # Plot the watch
-        plot_life_watch(year_fraction, month_fraction, hour_fraction, minute_fraction, ax)
+        # Plot the animated watch
+        animated_watch = plot_life_watch(year_fraction, month_fraction, hour_fraction, minute_fraction)
 
-    # Create animation
-    ani = animation.FuncAnimation(fig, update, interval=60000)  # Update every 60 seconds (minute)
+        # Update the Streamlit placeholder
+        watch_placeholder.pyplot(animated_watch)
 
-    # Display the animated plot in Streamlit
-    watch_placeholder.pyplot(fig)
-
-    # Wait for the animation to continue
-    plt.show()
+        # Update every minute
+        time.sleep(60)
