@@ -1,42 +1,56 @@
-
----
-
-### **life_watch.py**
-```python
 import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Title
-st.title("Life Watch")
+# Function to calculate remaining years
+def calculate_remaining_years(expected_lifespan, current_age):
+    return expected_lifespan - current_age
 
-# Inputs
-lifespan = st.number_input("Expected Lifespan (in years)", min_value=1, value=70)
-current_age = st.number_input("Your Current Age (in years)", min_value=0, value=30)
+# Function to create life watch visualization
+def plot_life_watch(expected_lifespan, current_age):
+    remaining_years = calculate_remaining_years(expected_lifespan, current_age)
+    total_years = expected_lifespan
+    
+    # Create the life watch as a pie chart
+    labels = ['Lived Years', 'Remaining Years']
+    sizes = [current_age, remaining_years]
+    colors = ['#00bfae', '#ffcc00']
 
-# Calculate remaining years
-remaining_years = lifespan - current_age
-elapsed_percentage = (current_age / lifespan) * 100
+    fig, ax = plt.subplots()
+    ax.pie(sizes, labels=labels, colors=colors, startangle=90, autopct='%1.1f%%', wedgeprops={'edgecolor': 'black'})
+    ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
-# Display results
-st.write(f"Remaining Years: **{remaining_years} years**")
-st.write(f"You've lived **{elapsed_percentage:.2f}%** of your life.")
+    st.pyplot(fig)
 
-# Create a watch visual
-theta = np.linspace(0, 2 * np.pi, 100)
-x = np.cos(theta)
-y = np.sin(theta)
+# Function to create life battery visualization
+def plot_life_battery(expected_lifespan, current_age):
+    remaining_years = calculate_remaining_years(expected_lifespan, current_age)
+    total_years = expected_lifespan
+    
+    # Life battery as a bar chart
+    fig, ax = plt.subplots(figsize=(6, 2))
+    ax.barh(['Life'], current_age, color='#00bfae', edgecolor='black', height=0.5)
+    ax.barh(['Life'], remaining_years, left=current_age, color='#ffcc00', edgecolor='black', height=0.5)
+    
+    ax.set_xlim(0, total_years)
+    ax.set_title("Life Battery")
+    ax.set_xlabel("Years")
+    ax.set_yticks([])  # Remove the y-axis ticks
+    
+    st.pyplot(fig)
 
-fig, ax = plt.subplots(figsize=(6, 6))
-ax.plot(x, y, color="gray")  # Outer circle
-ax.fill_between(x, y, where=(theta <= elapsed_percentage * 2 * np.pi / 100), color="blue", alpha=0.5)
-ax.set_aspect('equal', 'box')
-ax.set_title("Your Life Watch")
-ax.axis("off")
-st.pyplot(fig)
+# Streamlit user inputs
+st.title('Life Watch')
+expected_lifespan = st.number_input("Enter your expected lifespan (in years):", min_value=1, value=70)
+current_age = st.number_input("Enter your current age:", min_value=0, value=25)
 
-# Life battery
-battery_level = 100 - elapsed_percentage
-st.write(f"Life Battery: **{battery_level:.2f}% remaining**")
-battery_color = "green" if battery_level > 50 else "orange" if battery_level > 20 else "red"
-st.progress(int(battery_level), text=f"{int(battery_level)}%", color=battery_color)
+# Display calculations and visuals
+if st.button('Show My Life Watch'):
+    remaining_years = calculate_remaining_years(expected_lifespan, current_age)
+    
+    st.write(f"You have lived {current_age} years.")
+    st.write(f"You have {remaining_years} years remaining.")
+    
+    # Plot the life watch and life battery
+    plot_life_watch(expected_lifespan, current_age)
+    plot_life_battery(expected_lifespan, current_age)
