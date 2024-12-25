@@ -1,9 +1,9 @@
 import streamlit as st
 
-# Sidebar to get user inputs
+# Function to capture inputs from the sidebar
 def sidebar_inputs():
     # User inputs for expected lifespan and current age
-    expected_lifespan = st.number_input("Expected Lifespan (Years)", min_value=1, value=80, step=1)
-    current_age = st.number_input("Current Age (Years)", min_value=1, value=25, step=1)
+    expected_lifespan = st.sidebar.number_input('Expected Lifespan (years)', min_value=1, max_value=150, value=80)
+    current_age = st.sidebar.number_input('Your Current Age (years)', min_value=0, max_value=expected_lifespan, value=25)
     
     return expected_lifespan, current_age
