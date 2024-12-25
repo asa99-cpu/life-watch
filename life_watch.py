@@ -30,10 +30,8 @@ def get_time_fractions():
 
     return year_fraction, month_fraction, hour_fraction, minute_fraction
 
-# Optimized function to draw the life watch with animation
+# Optimized function to draw the life watch
 def plot_life_watch(year_fraction, month_fraction, hour_fraction, minute_fraction, ax):
-    ax.clear()  # Clear previous plots
-
     ax.set_aspect('equal')
     ax.set_xlim(-1.2, 1.2)
     ax.set_ylim(-1.2, 1.2)
@@ -94,16 +92,16 @@ if st.button('Start Life Watch'):
 
     # Create figure and axis for animation
     fig, ax = plt.subplots(figsize=(8, 8))
-    
-    # Create an animation function
+
+    # Define update function for the animation
     def update(frame):
         # Get time fractions
         year_fraction, month_fraction, hour_fraction, minute_fraction = get_time_fractions()
 
-        # Update the life watch plot
+        # Plot the watch
         plot_life_watch(year_fraction, month_fraction, hour_fraction, minute_fraction, ax)
-        
-    # Create the animation
+
+    # Create animation
     ani = animation.FuncAnimation(fig, update, interval=60000)  # Update every 60 seconds (minute)
 
     # Display the animated plot in Streamlit
