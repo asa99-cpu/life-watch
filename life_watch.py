@@ -1,13 +1,14 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
+import time  # For real-time updates
 
 # Function to calculate remaining years
 def calculate_remaining_years(expected_lifespan, current_age):
     return expected_lifespan - current_age
 
-# Function to create the life watch with detailed intervals and counterclockwise rotation
-def plot_life_watch(expected_lifespan, current_age):
+# Function to create the life watch with real-time updates
+def plot_life_watch(expected_lifespan, current_age, real_time_fraction):
     fig, ax = plt.subplots(figsize=(8, 8))
     ax.set_aspect('equal')
 
@@ -47,10 +48,10 @@ def plot_life_watch(expected_lifespan, current_age):
         y_inner = 0.85 * np.sin(sub_angle)
         ax.plot([x_inner, x_outer], [y_inner, y_outer], color='gray', lw=0.5)
 
-    # Add the current position as a needle
-    current_angle = 2 * np.pi * (1 - (current_age / expected_lifespan))
-    x_needle = 0.7 * np.cos(current_angle)
-    y_needle = 0.7 * np.sin(current_angle)
+    # Add the current position as a real-time needle
+    real_time_angle = 2 * np.pi * (1 - real_time_fraction)  # Counterclockwise rotation
+    x_needle = 0.7 * np.cos(real_time_angle)
+    y_needle = 0.7 * np.sin(real_time_angle)
     ax.plot([0, x_needle], [0, y_needle], color='red', lw=3)  # Needle in red
 
     # Add center dot
@@ -64,16 +65,30 @@ def plot_life_watch(expected_lifespan, current_age):
     st.pyplot(fig)
 
 # Streamlit user inputs
-st.title('Life Watch')
+st.title('Real-Time Life Watch')
 expected_lifespan = st.number_input("Enter your expected lifespan (in years):", min_value=1, value=80)
 current_age = st.number_input("Enter your current age:", min_value=0, value=25)
 
-# Display calculations and visuals
-if st.button('Show My Life Watch'):
+# Real-time updates
+if st.button('Start Life Watch'):
     remaining_years = calculate_remaining_years(expected_lifespan, current_age)
     
     st.write(f"You have lived {current_age} years.")
     st.write(f"You have {remaining_years} years remaining.")
     
-    # Plot the life watch
-    plot_life_watch(expected_lifespan, current_age)
+    # Start real-time updates
+    while True:
+        # Calculate the real-time fraction of the current year
+        current_time = time.time()  # Current time in seconds since epoch
+        seconds_per_year = 365.25 * 24 * 60 * 60
+        total_seconds_lived = current_age * seconds_per_year
+        current_year_fraction = (current_time % seconds_per_year) / seconds_per_year
+
+        # Calculate the needle position based on total life progress
+        total_progress_fraction = (current_age + current_year_fraction) / expected_lifespan
+
+        # Plot the life watch
+        plot_life_watch(expected_lifespan, current_age, total_progress_fraction)
+
+        # Update every second
+        time.sleep(1)
