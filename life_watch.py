@@ -4,9 +4,14 @@ import numpy as np
 import time
 from sidebar import sidebar_inputs  # Import the sidebar module
 
-# Function to calculate remaining years
-def calculate_remaining_years(expected_lifespan, current_age):
-    return expected_lifespan - current_age
+# Function to calculate real-time fractions for day, hours, minutes, and seconds
+def get_time_fractions():
+    now = time.localtime()  # Get the current local time
+    seconds_fraction = now.tm_sec / 60
+    minutes_fraction = (now.tm_min + seconds_fraction) / 60
+    hours_fraction = (now.tm_hour + minutes_fraction) / 24
+    day_fraction = hours_fraction
+    return seconds_fraction, minutes_fraction, hours_fraction, day_fraction
 
 # Function to create the life watch
 def plot_life_watch(expected_lifespan, current_age, real_time_fraction):
@@ -14,10 +19,9 @@ def plot_life_watch(expected_lifespan, current_age, real_time_fraction):
     ax.set_aspect('equal')
 
     # Create the watch face
-    circle = plt.Circle((0, 0), 1, color='#f0f0f0', ec='black')
-    ax.add_artist(circle)
+    ax.add_artist(plt.Circle((0, 0), 1, color='#f0f0f0', ec='black'))
 
-    # Add ticks for each year
+    # Add ticks for each year (outer ring)
     for year in range(expected_lifespan):
         angle = 2 * np.pi * (1 - (year / expected_lifespan))  # Counterclockwise rotation
         x_outer = 0.9 * np.cos(angle)
@@ -40,20 +44,39 @@ def plot_life_watch(expected_lifespan, current_age, real_time_fraction):
                 color='black',
             )
 
-    # Add smaller ticks for months (or weeks)
-    for sub_mark in range(expected_lifespan * 12):  # Adjust granularity as needed
-        sub_angle = 2 * np.pi * (1 - (sub_mark / (expected_lifespan * 12)))
-        x_outer = 0.88 * np.cos(sub_angle)
-        y_outer = 0.88 * np.sin(sub_angle)
-        x_inner = 0.85 * np.cos(sub_angle)
-        y_inner = 0.85 * np.sin(sub_angle)
-        ax.plot([x_inner, x_outer], [y_inner, y_outer], color='gray', lw=0.5)
+    # Add the year needle
+    year_angle = 2 * np.pi * (1 - real_time_fraction)  # Counterclockwise rotation
+    ax.plot([0, 0.7 * np.cos(year_angle)], [0, 0.7 * np.sin(year_angle)], color='red', lw=3)
 
-    # Add the current position as a real-time needle
-    real_time_angle = 2 * np.pi * (1 - real_time_fraction)  # Counterclockwise rotation
-    x_needle = 0.7 * np.cos(real_time_angle)
-    y_needle = 0.7 * np.sin(real_time_angle)
-    ax.plot([0, x_needle], [0, y_needle], color='red', lw=3)  # Needle in red
+    # Add the day progress (inner ring)
+    day_fraction = get_time_fractions()[-1]
+    day_angle = 2 * np.pi * (1 - day_fraction)
+    ax.plot([0, 0.5 * np.cos(day_angle)], [0, 0.5 * np.sin(day_angle)], color='blue', lw=2)
+
+    # Add ticks for hours, minutes, and seconds (like a clock face)
+    for hour in range(12):
+        angle = 2 * np.pi * (1 - hour / 12)  # Counterclockwise rotation
+        x_outer = 0.6 * np.cos(angle)
+        y_outer = 0.6 * np.sin(angle)
+        x_inner = 0.55 * np.cos(angle)
+        y_inner = 0.55 * np.sin(angle)
+        ax.plot([x_inner, x_outer], [y_inner, y_outer], color='black', lw=1)
+
+    # Real-time second, minute, and hour needles
+    seconds_fraction, minutes_fraction, hours_fraction, _ = get_time_fractions()
+
+    second_angle = 2 * np.pi * (1 - seconds_fraction)
+    minute_angle = 2 * np.pi * (1 - minutes_fraction)
+    hour_angle = 2 * np.pi * (1 - hours_fraction)
+
+    # Second needle
+    ax.plot([0, 0.4 * np.cos(second_angle)], [0, 0.4 * np.sin(second_angle)], color='green', lw=1)
+
+    # Minute needle
+    ax.plot([0, 0.3 * np.cos(minute_angle)], [0, 0.3 * np.sin(minute_angle)], color='orange', lw=2)
+
+    # Hour needle
+    ax.plot([0, 0.2 * np.cos(hour_angle)], [0, 0.2 * np.sin(hour_angle)], color='purple', lw=3)
 
     # Add center dot
     ax.plot(0, 0, 'o', color='black')
@@ -72,7 +95,7 @@ st.title('Real-Time Life Watch')
 expected_lifespan, current_age = sidebar_inputs()
 
 if st.button('Start Life Watch'):
-    remaining_years = calculate_remaining_years(expected_lifespan, current_age)
+    remaining_years = expected_lifespan - current_age
     st.write(f"You have lived {current_age} years.")
     st.write(f"You have {remaining_years} years remaining.")
 
