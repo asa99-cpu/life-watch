@@ -2,6 +2,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
 import time
+from sidebar import sidebar_inputs  # Import the sidebar module
 
 # Function to calculate remaining years
 def calculate_remaining_years(expected_lifespan, current_age):
@@ -64,10 +65,11 @@ def plot_life_watch(expected_lifespan, current_age, real_time_fraction):
 
     return fig
 
-# Streamlit user inputs
+# Main application
 st.title('Real-Time Life Watch')
-expected_lifespan = st.number_input("Enter your expected lifespan (in years):", min_value=1, value=80)
-current_age = st.number_input("Enter your current age:", min_value=0, value=25)
+
+# Get inputs from the sidebar
+expected_lifespan, current_age = sidebar_inputs()
 
 if st.button('Start Life Watch'):
     remaining_years = calculate_remaining_years(expected_lifespan, current_age)
