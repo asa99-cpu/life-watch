@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 from sidebar import sidebar_inputs  # Import sidebar inputs
+import matplotlib.animation as animation
 
 # Function to calculate time fractions for year, month, day, and minute
 def get_time_fractions():
@@ -29,9 +30,10 @@ def get_time_fractions():
 
     return year_fraction, month_fraction, hour_fraction, minute_fraction
 
-# Optimized function to draw the life watch
-def plot_life_watch(year_fraction, month_fraction, hour_fraction, minute_fraction):
-    fig, ax = plt.subplots(figsize=(8, 8))
+# Optimized function to draw the life watch with animation
+def plot_life_watch(year_fraction, month_fraction, hour_fraction, minute_fraction, ax):
+    ax.clear()  # Clear previous plots
+
     ax.set_aspect('equal')
     ax.set_xlim(-1.2, 1.2)
     ax.set_ylim(-1.2, 1.2)
@@ -73,8 +75,6 @@ def plot_life_watch(year_fraction, month_fraction, hour_fraction, minute_fractio
 
     # Add legend to explain colors
     ax.legend(loc="upper right", fontsize=10)
-    
-    return fig
 
 # Main application logic
 st.title('Life Watch: Real-Time Day, Month, and Year Progress')
@@ -92,16 +92,22 @@ if st.button('Start Life Watch'):
     # Placeholder for the watch
     watch_placeholder = st.empty()
 
-    # Real-time updates, updating every minute to optimize performance
-    while True:
+    # Create figure and axis for animation
+    fig, ax = plt.subplots(figsize=(8, 8))
+    
+    # Create an animation function
+    def update(frame):
         # Get time fractions
         year_fraction, month_fraction, hour_fraction, minute_fraction = get_time_fractions()
 
-        # Plot the watch
-        fig = plot_life_watch(year_fraction, month_fraction, hour_fraction, minute_fraction)
+        # Update the life watch plot
+        plot_life_watch(year_fraction, month_fraction, hour_fraction, minute_fraction, ax)
+        
+    # Create the animation
+    ani = animation.FuncAnimation(fig, update, interval=60000)  # Update every 60 seconds (minute)
 
-        # Update the Streamlit placeholder with the new figure
-        watch_placeholder.pyplot(fig)
+    # Display the animated plot in Streamlit
+    watch_placeholder.pyplot(fig)
 
-        # Wait for the next minute
-        time.sleep(60)
+    # Wait for the animation to continue
+    plt.show()
