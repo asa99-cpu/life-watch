@@ -1,9 +1,21 @@
 import streamlit as st
 import math
-from datetime import timedelta
+from datetime import datetime, timedelta
+import time  # Required for real-time updates
 
 # Import the sidebar function
 from sidebar import user_inputs
+
+# Function to display the real-time clock
+def real_time_clock():
+    # Get the current time
+    now = datetime.now()
+    current_time = now.strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Display the clock
+    st.subheader("🕒 Real-Time Clock")
+    st.markdown(f"**Current Date and Time:** {current_time}")
+    st.markdown("---")
 
 # Main application
 def main():
@@ -23,6 +35,9 @@ def main():
     # Main title
     st.title("⏰ Your Life Watch")
     st.write("**Make every moment count.** This watch reminds you how precious life is.")
+    
+    # Real-Time Clock Display
+    real_time_clock()
     
     # Visual representation
     col1, col2 = st.columns([2, 1])
@@ -69,5 +84,9 @@ def main():
         """
     )
 
+# Run the main application
 if __name__ == "__main__":
-    main()
+    # Streamlit automatically refreshes, but we can add a small delay for the clock to update smoothly
+    while True:
+        main()
+        time.sleep(1)
