@@ -9,8 +9,8 @@ st.set_page_config(page_title="Life Watch", layout="wide")
 from sidebar import user_inputs
 
 
-# Function to display the real-time clock
-def real_time_clock():
+# Function to display the real watch
+def real_watch():
     now = datetime.now()
     year = now.year
     month = now.month
@@ -19,11 +19,17 @@ def real_time_clock():
     minute = now.minute
     second = now.second
 
-    # Create a digital watch style
+    # Display all numbers on the watch
     st.markdown(
         f"""
-        <div style="text-align: center; font-size: 40px; font-weight: bold; color: #4CAF50; padding: 10px; border: 2px solid #4CAF50; border-radius: 10px; width: 300px; margin: auto;">
-            {year}-{month:02d}-{day:02d} <br> {hour:02d}:{minute:02d}:{second:02d}
+        <div style="text-align: center; font-size: 20px; font-weight: bold; color: #4CAF50; border: 2px solid #4CAF50; border-radius: 10px; padding: 10px; width: 350px; margin: auto;">
+            <h3 style="margin: 5px;">Real Watch</h3>
+            <p style="margin: 5px;">Year: {year}</p>
+            <p style="margin: 5px;">Month: {month:02d}</p>
+            <p style="margin: 5px;">Day: {day:02d}</p>
+            <p style="margin: 5px;">Hour: {hour:02d}</p>
+            <p style="margin: 5px;">Minute: {minute:02d}</p>
+            <p style="margin: 5px;">Second: {second:02d}</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -47,9 +53,9 @@ def main():
     st.title("⏰ Your Life Watch")
     st.write("**Make every moment count.** This watch reminds you how precious life is.")
 
-    # Real-Time Clock Display
-    st.subheader("🕒 Real-Time Digital Watch")
-    real_time_clock()
+    # Real Watch Display
+    st.subheader("🕒 Real Watch")
+    real_watch()  # Display the real watch with full numbers
     st.markdown("---")
 
     # Visual representation
@@ -99,6 +105,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # Streamlit apps cannot continuously refresh widgets with loops; instead, the app refreshes automatically upon interactions.
-    # This avoids duplicate element errors while displaying a real-time clock.
     main()
