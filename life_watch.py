@@ -1,7 +1,7 @@
 import streamlit as st
 import math
 from datetime import datetime, timedelta
-import time  # Required for real-time updates
+import time  # Required for the real-time clock
 
 # Set page configuration at the very beginning
 st.set_page_config(page_title="Life Watch", layout="wide")
@@ -11,38 +11,49 @@ from sidebar import user_inputs
 
 # Function to display the real-time clock
 def real_time_clock():
-    # Get the current time
     now = datetime.now()
-    current_time = now.strftime("%Y-%m-%d %H:%M:%S")
-    
-    # Display the clock
-    st.subheader("🕒 Real-Time Clock")
-    st.markdown(f"**Current Date and Time:** {current_time}")
-    st.markdown("---")
+    year = now.year
+    month = now.month
+    day = now.day
+    hour = now.hour
+    minute = now.minute
+    second = now.second
+
+    # Create a digital watch style
+    st.markdown(
+        f"""
+        <div style="text-align: center; font-size: 40px; font-weight: bold; color: #4CAF50; padding: 10px; border: 2px solid #4CAF50; border-radius: 10px; width: 300px; margin: auto;">
+            {year}-{month:02d}-{day:02d} <br> {hour:02d}:{minute:02d}:{second:02d}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 # Main application
 def main():
     # Get user inputs
     current_age, lifespan = user_inputs()
-    
+
     # Calculate remaining years, months, days
     remaining_years = lifespan - current_age
     remaining_days = remaining_years * 365  # Approximate
-    
+
     # Calculate percentage of life lived and left
     percentage_lived = (current_age / lifespan) * 100
     percentage_left = 100 - percentage_lived
-    
+
     # Main title
     st.title("⏰ Your Life Watch")
     st.write("**Make every moment count.** This watch reminds you how precious life is.")
-    
+
     # Real-Time Clock Display
+    st.subheader("🕒 Real-Time Digital Watch")
     real_time_clock()
-    
+    st.markdown("---")
+
     # Visual representation
     col1, col2 = st.columns([2, 1])
-    
+
     with col1:
         # Life Watch display
         st.subheader("🔵 Life Watch")
@@ -55,7 +66,7 @@ def main():
                 - **Days:** {remaining_days:,}  
             """
         )
-    
+
     with col2:
         # Life Battery
         st.subheader("🔋 Life Battery")
@@ -66,7 +77,7 @@ def main():
             - **Life Left:** {percentage_left:.2f}%  
             """
         )
-        
+
         # Charging Bar for Remaining Life
         st.subheader("🔌 Charging Bar (Remaining Life)")
         st.progress(math.floor(percentage_left))
@@ -75,7 +86,7 @@ def main():
             - **Charging Status:** Remaining life at **{percentage_left:.2f}%**
             """
         )
-    
+
     # Emotional message
     st.markdown(
         """
@@ -87,4 +98,6 @@ def main():
 
 # Run the main application
 if __name__ == "__main__":
-    main()
+    while True:
+        main()
+        time.sleep(1)
