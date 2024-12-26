@@ -1,13 +1,13 @@
 import streamlit as st
 import math
 from datetime import datetime, timedelta
-import time  # Required for the real-time clock
 
 # Set page configuration at the very beginning
 st.set_page_config(page_title="Life Watch", layout="wide")
 
 # Import the sidebar function
 from sidebar import user_inputs
+
 
 # Function to display the real-time clock
 def real_time_clock():
@@ -28,6 +28,7 @@ def real_time_clock():
         """,
         unsafe_allow_html=True,
     )
+
 
 # Main application
 def main():
@@ -96,8 +97,8 @@ def main():
         """
     )
 
-# Run the main application
+
 if __name__ == "__main__":
-    while True:
-        main()
-        time.sleep(1)
+    # Streamlit apps cannot continuously refresh widgets with loops; instead, the app refreshes automatically upon interactions.
+    # This avoids duplicate element errors while displaying a real-time clock.
+    main()
