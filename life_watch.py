@@ -1,108 +1,79 @@
 import streamlit as st
-import math
-from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
+import numpy as np
+from datetime import datetime
 
 # Set page configuration at the very beginning
 st.set_page_config(page_title="Life Watch", layout="wide")
 
 # Import the sidebar function
-from sidebar import user_inputs
+def user_inputs():
+    st.sidebar.header("Life Inputs")
+    current_age = st.sidebar.number_input("Enter your current age:", min_value=0, max_value=120, value=25, step=1)
+    lifespan = st.sidebar.number_input("Enter your expected lifespan:", min_value=1, max_value=120, value=70, step=1)
+    return current_age, lifespan
 
+# Function to create the circular life clock
+def draw_life_watch(current_age, lifespan):
+    # Calculate the percentage of life lived
+    life_percentage = current_age / lifespan
 
-# Function to display the real watch
-def real_watch():
-    now = datetime.now()
-    year = now.year
-    month = now.month
-    day = now.day
-    hour = now.hour
-    minute = now.minute
-    second = now.second
+    # Create the circular "life clock"
+    fig, ax = plt.subplots(figsize=(6, 6))
+    ax.axis("equal")  # Make it circular
 
-    # Display all numbers on the watch
-    st.markdown(
-        f"""
-        <div style="text-align: center; font-size: 20px; font-weight: bold; color: #4CAF50; border: 2px solid #4CAF50; border-radius: 10px; padding: 10px; width: 350px; margin: auto;">
-            <h3 style="margin: 5px;">Real Watch</h3>
-            <p style="margin: 5px;">Year: {year}</p>
-            <p style="margin: 5px;">Month: {month:02d}</p>
-            <p style="margin: 5px;">Day: {day:02d}</p>
-            <p style="margin: 5px;">Hour: {hour:02d}</p>
-            <p style="margin: 5px;">Minute: {minute:02d}</p>
-            <p style="margin: 5px;">Second: {second:02d}</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    # Create the "clock" as a pie chart
+    theta = np.linspace(0, 2 * np.pi, 1000)
+    ax.fill_between(np.cos(theta), np.sin(theta), color="#f0f0f0")
 
+    # Add labels for each "year" on the clock
+    for i in range(0, lifespan + 1, 5):  # Add ticks every 5 years
+        angle = 2 * np.pi * i / lifespan
+        x, y = np.cos(angle), np.sin(angle)
+        ax.text(
+            x * 1.1, y * 1.1, f"{i}",
+            ha="center", va="center", fontsize=10, color="#555"
+        )
+
+    # Plot the "hand" of the clock
+    angle = 2 * np.pi * current_age / lifespan
+    ax.plot([0, np.cos(angle)], [0, np.sin(angle)], color="red", linewidth=2, label="Current Age")
+
+    # Add styling and labels
+    ax.set_title("Circular Life Watch", fontsize=16)
+    ax.legend(loc="upper right")
+    ax.axis("off")  # Remove axes
+    return fig
 
 # Main application
 def main():
     # Get user inputs
     current_age, lifespan = user_inputs()
 
-    # Calculate remaining years, months, days
-    remaining_years = lifespan - current_age
-    remaining_days = remaining_years * 365  # Approximate
+    # Display the life clock
+    st.title("⏰ Your Circular Life Watch")
+    st.write("**A visual representation of your life's timeline.**")
 
-    # Calculate percentage of life lived and left
+    st.subheader("🕒 Life Clock")
+    fig = draw_life_watch(current_age, lifespan)
+    st.pyplot(fig)
+
+    # Additional stats
+    remaining_years = lifespan - current_age
     percentage_lived = (current_age / lifespan) * 100
     percentage_left = 100 - percentage_lived
 
-    # Main title
-    st.title("⏰ Your Life Watch")
-    st.write("**Make every moment count.** This watch reminds you how precious life is.")
-
-    # Real Watch Display
-    st.subheader("🕒 Real Watch")
-    real_watch()  # Display the real watch with full numbers
     st.markdown("---")
-
-    # Visual representation
-    col1, col2 = st.columns([2, 1])
-
-    with col1:
-        # Life Watch display
-        st.subheader("🔵 Life Watch")
-        st.markdown(
-            f"""
-            - **Current Age:** {current_age} years  
-            - **Expected Lifespan:** {lifespan} years  
-            - **Remaining Time:**  
-                - **Years:** {remaining_years}  
-                - **Days:** {remaining_days:,}  
-            """
-        )
-
-    with col2:
-        # Life Battery
-        st.subheader("🔋 Life Battery")
-        st.progress(math.floor(percentage_left))
-        st.markdown(
-            f"""
-            - **Life Lived:** {percentage_lived:.2f}%  
-            - **Life Left:** {percentage_left:.2f}%  
-            """
-        )
-
-        # Charging Bar for Remaining Life
-        st.subheader("🔌 Charging Bar (Remaining Life)")
-        st.progress(math.floor(percentage_left))
-        st.markdown(
-            f"""
-            - **Charging Status:** Remaining life at **{percentage_left:.2f}%**
-            """
-        )
-
-    # Emotional message
+    st.subheader("📊 Life Summary")
     st.markdown(
-        """
-        ---
-        ### Reflect on this
-        Each passing second is an opportunity to live meaningfully. Spend your time wisely, cherish your moments, and embrace life to the fullest.
+        f"""
+        - **Current Age:** {current_age} years  
+        - **Expected Lifespan:** {lifespan} years  
+        - **Remaining Years:** {remaining_years}  
+        - **Life Lived:** {percentage_lived:.2f}%  
+        - **Life Left:** {percentage_left:.2f}%
         """
     )
-
 
 if __name__ == "__main__":
     main()
