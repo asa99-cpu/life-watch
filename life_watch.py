@@ -3,6 +3,7 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
+from matplotlib.patches import Wedge
 
 # Set page configuration at the very beginning
 st.set_page_config(page_title="Life Watch", layout="wide")
@@ -22,34 +23,35 @@ def real_time_clock():
     st.markdown(f"**Current Date and Time:** {current_time}")
     st.markdown("---")
 
-# Circular Life Watch
+# Circular Life Watch with filled wedges
 def draw_life_watch(current_age, lifespan):
     life_percentage = current_age / lifespan
     fig, ax = plt.subplots(figsize=(6, 6))
     ax.axis("equal")
 
-    # Create the "clock"
-    theta = np.linspace(0, 2 * np.pi, 1000)
-    ax.fill_between(np.cos(theta), np.sin(theta), color="#f0f0f0")  # Background color of the clock
+    # Create the background of the clock (light gray circle)
+    circle = plt.Circle((0, 0), 1, color='#f0f0f0', ec='black', lw=1)
+    ax.add_artist(circle)
 
-    # Draw the passed life part in red
-    passed_angle = 2 * np.pi * life_percentage
-    ax.fill_between(theta[:int(passed_angle * 1000 / (2 * np.pi))], np.sin(theta[:int(passed_angle * 1000 / (2 * np.pi))]), 
-                    color="red")
+    # Draw the passed life part in red (filled wedge)
+    passed_angle = 360 * life_percentage
+    passed_wedge = Wedge(center=(0, 0), r=1, theta1=0, theta2=passed_angle, facecolor='red')
+    ax.add_artist(passed_wedge)
 
-    # Draw the remaining life part in green
-    ax.fill_between(theta[int(passed_angle * 1000 / (2 * np.pi)):], np.sin(theta[int(passed_angle * 1000 / (2 * np.pi)):]), 
-                    color="green")
+    # Draw the remaining life part in green (filled wedge)
+    remaining_angle = 360 * (1 - life_percentage)
+    remaining_wedge = Wedge(center=(0, 0), r=1, theta1=passed_angle, theta2=passed_angle + remaining_angle, facecolor='green')
+    ax.add_artist(remaining_wedge)
 
-    # Add labels
+    # Add labels for passed life in red and remaining life in green
     for i in range(0, lifespan + 1, 5):  # Tick every 5 years
-        angle = 2 * np.pi * i / lifespan
-        x, y = np.cos(angle), np.sin(angle)
-        ax.text(x * 1.1, y * 1.1, f"{i}", ha="center", va="center", fontsize=10, color="#555")
+        angle = 360 * i / lifespan
+        x, y = np.cos(np.radians(angle)), np.sin(np.radians(angle))
+        ax.text(x * 1.15, y * 1.15, f"{i}", ha="center", va="center", fontsize=10, color="#555")
 
-    # Add the "hand" of the clock
-    angle = 2 * np.pi * current_age / lifespan
-    ax.plot([0, np.cos(angle)], [0, np.sin(angle)], color="blue", linewidth=2, label="Current Age")
+    # Add the "hand" of the clock (red color)
+    angle = 360 * current_age / lifespan
+    ax.plot([0, np.cos(np.radians(angle))], [0, np.sin(np.radians(angle))], color="blue", linewidth=2, label="Current Age")
 
     # Styling
     ax.set_title("Circular Life Watch", fontsize=16)
