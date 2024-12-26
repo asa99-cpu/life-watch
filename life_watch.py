@@ -16,7 +16,7 @@ def main():
     remaining_years = lifespan - current_age
     remaining_days = remaining_years * 365  # Approximate
     
-    # Calculate percentage of life lived
+    # Calculate percentage of life lived and left
     percentage_lived = (current_age / lifespan) * 100
     percentage_left = 100 - percentage_lived
     
@@ -48,6 +48,15 @@ def main():
             f"""
             - **Life Lived:** {percentage_lived:.2f}%  
             - **Life Left:** {percentage_left:.2f}%  
+            """
+        )
+        
+        # Charging Bar for Remaining Life
+        st.subheader("🔌 Charging Bar (Remaining Life)")
+        st.progress(math.floor(percentage_left))
+        st.markdown(
+            f"""
+            - **Charging Status:** Remaining life at **{percentage_left:.2f}%**
             """
         )
     
