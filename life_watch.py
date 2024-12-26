@@ -3,6 +3,9 @@ import math
 from datetime import datetime, timedelta
 import time  # Required for real-time updates
 
+# Set page configuration at the very beginning
+st.set_page_config(page_title="Life Watch", layout="wide")
+
 # Import the sidebar function
 from sidebar import user_inputs
 
@@ -19,8 +22,6 @@ def real_time_clock():
 
 # Main application
 def main():
-    st.set_page_config(page_title="Life Watch", layout="wide")
-    
     # Get user inputs
     current_age, lifespan = user_inputs()
     
@@ -86,7 +87,4 @@ def main():
 
 # Run the main application
 if __name__ == "__main__":
-    # Streamlit automatically refreshes, but we can add a small delay for the clock to update smoothly
-    while True:
-        main()
-        time.sleep(1)
+    main()
