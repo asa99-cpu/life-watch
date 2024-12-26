@@ -30,7 +30,16 @@ def draw_life_watch(current_age, lifespan):
 
     # Create the "clock"
     theta = np.linspace(0, 2 * np.pi, 1000)
-    ax.fill_between(np.cos(theta), np.sin(theta), color="#f0f0f0")
+    ax.fill_between(np.cos(theta), np.sin(theta), color="#f0f0f0")  # Background color of the clock
+
+    # Draw the passed life part in red
+    passed_angle = 2 * np.pi * life_percentage
+    ax.fill_between(theta[:int(passed_angle * 1000 / (2 * np.pi))], np.sin(theta[:int(passed_angle * 1000 / (2 * np.pi))]), 
+                    color="red")
+
+    # Draw the remaining life part in green
+    ax.fill_between(theta[int(passed_angle * 1000 / (2 * np.pi)):], np.sin(theta[int(passed_angle * 1000 / (2 * np.pi)):]), 
+                    color="green")
 
     # Add labels
     for i in range(0, lifespan + 1, 5):  # Tick every 5 years
@@ -40,7 +49,7 @@ def draw_life_watch(current_age, lifespan):
 
     # Add the "hand" of the clock
     angle = 2 * np.pi * current_age / lifespan
-    ax.plot([0, np.cos(angle)], [0, np.sin(angle)], color="red", linewidth=2, label="Current Age")
+    ax.plot([0, np.cos(angle)], [0, np.sin(angle)], color="blue", linewidth=2, label="Current Age")
 
     # Styling
     ax.set_title("Circular Life Watch", fontsize=16)
@@ -102,7 +111,7 @@ def main():
     # Motivational Message
     st.markdown(
         """
-        ---
+        --- 
         ### Reflect on this
         Every second is precious. Use your time wisely, make meaningful connections, and embrace life's journey.
         """
