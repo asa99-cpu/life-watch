@@ -3,16 +3,10 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
+from sidebar import user_inputs  # Importing the updated sidebar script
 
 # Set page configuration at the very beginning
 st.set_page_config(page_title="Life Watch", layout="wide")
-
-# Sidebar inputs
-def user_inputs():
-    st.sidebar.header("Life Inputs")
-    current_age = st.sidebar.number_input("Enter your current age:", min_value=0, max_value=120, value=25, step=1)
-    lifespan = st.sidebar.number_input("Enter your expected lifespan:", min_value=1, max_value=120, value=70, step=1)
-    return current_age, lifespan
 
 # Real-Time Clock Display
 def real_time_clock():
@@ -56,11 +50,17 @@ def draw_life_watch(current_age, lifespan):
 # Main application
 def main():
     # Get user inputs
-    current_age, lifespan = user_inputs()
+    current_age, lifespan, desired_age = user_inputs()
     remaining_years = lifespan - current_age
     remaining_days = remaining_years * 365
     percentage_lived = (current_age / lifespan) * 100
     percentage_left = 100 - percentage_lived
+
+    # Calculate stats for desired age
+    desired_remaining_years = lifespan - desired_age
+    desired_remaining_days = desired_remaining_years * 365
+    desired_percentage_lived = (desired_age / lifespan) * 100
+    desired_percentage_left = 100 - desired_percentage_lived
 
     # Title and Clock
     st.title("⏰ Your Life Watch")
@@ -72,13 +72,17 @@ def main():
 
     with col1:
         # Circular Life Watch
-        st.subheader("🕒 Circular Life Watch")
-        fig = draw_life_watch(current_age, lifespan)
-        st.pyplot(fig)
+        st.subheader("🕒 Circular Life Watch (Real Age)")
+        fig_real = draw_life_watch(current_age, lifespan)
+        st.pyplot(fig_real)
+
+        st.subheader("🌟 Circular Life Watch (Desired Age)")
+        fig_desired = draw_life_watch(desired_age, lifespan)
+        st.pyplot(fig_desired)
 
     with col2:
-        # Life Summary Stats
-        st.subheader("🔵 Life Stats")
+        # Life Summary Stats for Real Age
+        st.subheader("🔵 Life Stats (Real Age)")
         st.markdown(
             f"""
             - **Current Age:** {current_age} years  
@@ -88,9 +92,6 @@ def main():
                 - **Days:** {remaining_days:,}  
             """
         )
-
-        # Life Battery Bar
-        st.subheader("🔋 Life Battery")
         st.progress(math.floor(percentage_left))
         st.markdown(
             f"""
@@ -99,10 +100,24 @@ def main():
             """
         )
 
-        # Charging Bar for Remaining Life
-        st.subheader("🔌 Charging Bar (Remaining Life)")
-        st.progress(math.floor(percentage_left))
-        st.markdown(f"**Charging Status:** Remaining life at **{percentage_left:.2f}%**")
+        # Life Summary Stats for Desired Age
+        st.subheader("🌟 Life Stats (Desired Age)")
+        st.markdown(
+            f"""
+            - **Desired Age:** {desired_age} years  
+            - **Expected Lifespan:** {lifespan} years  
+            - **Remaining Time:**  
+                - **Years:** {desired_remaining_years}  
+                - **Days:** {desired_remaining_days:,}  
+            """
+        )
+        st.progress(math.floor(desired_percentage_left))
+        st.markdown(
+            f"""
+            - **Life Lived (Desired):** {desired_percentage_lived:.2f}%  
+            - **Life Left (Desired):** {desired_percentage_left:.2f}%  
+            """
+        )
 
     # Motivational Message
     st.markdown(
