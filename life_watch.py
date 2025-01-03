@@ -79,13 +79,17 @@ if theme == "Dark":
 watch_style = display_dropdown()
 
 # Create and display the selected life clock style
+fig = None  # Initialize fig to avoid NameError
 if watch_style == "Life Watch":
     fig = create_life_watch(passed_time, remaining_time, st.session_state.desired_age)
 elif watch_style == "Timeline":
     fig = create_timeline(passed_time, remaining_time)
 
-# Display the visualization
-st.pyplot(fig)
+# Display the visualization if fig is defined
+if fig is not None:
+    st.pyplot(fig)
+else:
+    st.error("No visualization selected. Please choose a valid option.")
 
 # Display detailed time breakdown
 st.markdown("### Time Breakdown")
