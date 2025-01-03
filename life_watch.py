@@ -14,15 +14,16 @@ But what about our own lives? Are we charging ourselves with skills, positivity,
 Use this app to reflect on your life and visualize your time with the **Life Clock**.
 """)
 
-# Sidebar for Age Input
-st.sidebar.header("Life Clock Settings ⏳")
-current_age = st.sidebar.number_input("What is your current age?", min_value=0, max_value=120, value=25)
-desired_age = st.sidebar.number_input("What is the age you wish to live to?", min_value=current_age + 1, max_value=150, value=80)
+# Check if session state variables exist (set by sidebar.py)
+if "current_age" not in st.session_state:
+    st.session_state.current_age = 25  # Default value
+if "desired_age" not in st.session_state:
+    st.session_state.desired_age = 80  # Default value
 
 # Calculate Passed and Remaining Time
-passed_time = current_age
-remaining_time = desired_age - current_age
-total_time = desired_age
+passed_time = st.session_state.current_age
+remaining_time = st.session_state.desired_age - st.session_state.current_age
+total_time = st.session_state.desired_age
 
 # Dropdown for selecting the watch style
 st.header("Choose Your Life Clock Style")
