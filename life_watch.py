@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Wedge
 
+# Import the sidebar inputs
+from sidebar import sidebar_inputs
+
 # Title of the app
 st.title("Life Charging Bar ⚡")
 st.subheader("Check Your Life's Charging Status Instead of Your Phone's!")
@@ -13,6 +16,9 @@ Every morning, we check our phone's battery to see if it needs charging.
 But what about our own lives? Are we charging ourselves with skills, positivity, and growth?
 Use this app to reflect on your life and visualize your time with the **Life Clock**.
 """)
+
+# Run the sidebar inputs
+sidebar_inputs()
 
 # Check if session state variables exist (set by sidebar.py)
 if "current_age" not in st.session_state:
