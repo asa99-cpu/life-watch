@@ -35,10 +35,11 @@ def display_dropdown():
     return st.sidebar.selectbox(
         "Select a style for your Life Clock:",
         options=[
+            "Life Watch",  # Make "Life Watch" the first option
             "Pie Chart", "Bar Chart", "Radial Bar",
-            "Donut Chart", "Progress Ring", "Life Watch", "Timeline"
-        ],  # All visualization options
-        index=0  # Default to the first option
+            "Donut Chart", "Progress Ring", "Timeline"
+        ],
+        index=0  # Default to the first option ("Life Watch")
     )
 
 def display_theme_selector():
