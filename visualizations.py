@@ -10,7 +10,6 @@ BACKGROUND_COLOR = "#F0F0F0"  # Light gray
 def create_life_watch(passed_time, remaining_time, desired_age):
     """
     Create a watch-like visualization to show passed and remaining time.
-    This is the main visualization and is kept as the primary focus.
     """
     fig, ax = plt.subplots(figsize=(6, 6), facecolor=BACKGROUND_COLOR)
     ax.set_xlim(-1.2, 1.2)
@@ -62,7 +61,6 @@ def create_life_watch(passed_time, remaining_time, desired_age):
 def create_timeline(passed_time, remaining_time):
     """
     Create a simple timeline visualization to show passed and remaining time.
-    This is a secondary visualization that complements the life watch.
     """
     fig, ax = plt.subplots(figsize=(10, 2), facecolor=BACKGROUND_COLOR)
     total_time = passed_time + remaining_time
