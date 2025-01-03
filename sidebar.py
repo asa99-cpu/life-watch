@@ -1,6 +1,5 @@
 import streamlit as st
 
-# Sidebar for Age Input
 def sidebar_inputs():
     st.sidebar.header("Life Clock Settings ⏳")
     
@@ -26,7 +25,8 @@ def sidebar_inputs():
     st.session_state.current_age = current_age
     st.session_state.desired_age = desired_age
 
-# Run the sidebar inputs
-if __name__ == "__main__":
-    sidebar_inputs()
-
+def display_dropdown():
+    return st.sidebar.selectbox(
+        "Select a style for your Life Clock:",
+        ["Pie Chart", "Bar Chart", "Radial Bar", "Donut Chart", "Progress Ring"]
+    )
