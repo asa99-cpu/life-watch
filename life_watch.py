@@ -37,7 +37,7 @@ def draw_real_watch(current_age, lifespan):
 
     # Add tick marks and labels every 5 years
     for i in range(0, lifespan + 1, 5):
-        angle = 2 * np.pi * i / lifespan - np.pi / 2  # Adjust angle to position 0 at the top
+        angle = 2 * np.pi * i / lifespan - np.pi / 2  # Adjust angle to position 0 at the top (12 o'clock)
         x_start, y_start = np.cos(angle) * 0.95, np.sin(angle) * 0.95
         x_end, y_end = np.cos(angle), np.sin(angle)
         ax.plot([x_start, x_end], [y_start, y_end], color="black", linewidth=1)
@@ -52,7 +52,7 @@ def draw_real_watch(current_age, lifespan):
             ax.text(x, y, str(i), ha="center", va="center", fontsize=10, color="black")
 
     # Add the clock hand for current age
-    angle = 2 * np.pi * current_age / lifespan - np.pi / 2  # Adjust angle to position 0 at the top
+    angle = 2 * np.pi * current_age / lifespan - np.pi / 2  # Adjust angle to position 0 at the top (12 o'clock)
     ax.plot([0, np.cos(angle)], [0, np.sin(angle)], color="black", linewidth=3)
 
     # Styling
