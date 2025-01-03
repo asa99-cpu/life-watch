@@ -1,6 +1,9 @@
 import streamlit as st
 
 def sidebar_inputs():
+    """
+    Display input fields in the sidebar for current age and desired age.
+    """
     st.sidebar.header("Life Clock Settings ⏳")
     
     # Input for current age
@@ -26,22 +29,33 @@ def sidebar_inputs():
     st.session_state.desired_age = desired_age
 
 def display_dropdown():
+    """
+    Display a dropdown menu to select the visualization style.
+    """
     return st.sidebar.selectbox(
         "Select a style for your Life Clock:",
-        ["Pie Chart", "Bar Chart", "Radial Bar", "Donut Chart", "Progress Ring", "Life Watch"]
+        options=[
+            "Pie Chart", "Bar Chart", "Radial Bar",
+            "Donut Chart", "Progress Ring", "Life Watch", "Timeline"
+        ],  # All visualization options
+        index=0  # Default to the first option
     )
 
 def display_theme_selector():
-    # Theme selector for light/dark mode
+    """
+    Display a theme selector for light/dark mode.
+    """
     theme = st.sidebar.selectbox(
         "Choose a theme:",
-        ["Light", "Dark"],
+        options=["Light", "Dark"],
         help="Switch between light and dark themes."
     )
     return theme
 
 def display_about_section():
-    # About section in the sidebar
+    """
+    Display the 'About' section in the sidebar.
+    """
     st.sidebar.markdown("---")
     st.sidebar.markdown(
         """
@@ -52,7 +66,9 @@ def display_about_section():
     )
 
 def display_footer():
-    # Footer in the sidebar
+    """
+    Display the footer in the sidebar.
+    """
     st.sidebar.markdown("---")
     st.sidebar.markdown(
         """
