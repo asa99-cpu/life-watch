@@ -28,26 +28,32 @@ def real_time_clock():
 
 # Circular Life Watch visualization
 def draw_life_watch(current_age, lifespan):
+    # Percentage of life lived
     life_percentage = current_age / lifespan
+
+    # Adjust theta to start from zero at the top
+    theta = np.linspace(0, 2 * np.pi, 1000) - np.pi / 2
+
+    # Create the figure
     fig, ax = plt.subplots(figsize=(6, 6))
     ax.axis("equal")
 
-    # Create the passed life section (red)
-    theta_passed = np.linspace(0, 2 * np.pi * life_percentage, 500)
+    # Passed life (red section)
+    theta_passed = np.linspace(0, 2 * np.pi * life_percentage, 500) - np.pi / 2
     ax.fill_between(np.cos(theta_passed), np.sin(theta_passed), color="red", alpha=0.6)
 
-    # Create the remaining life section (green)
-    theta_remaining = np.linspace(2 * np.pi * life_percentage, 2 * np.pi, 500)
+    # Remaining life (green section)
+    theta_remaining = np.linspace(2 * np.pi * life_percentage, 2 * np.pi, 500) - np.pi / 2
     ax.fill_between(np.cos(theta_remaining), np.sin(theta_remaining), color="green", alpha=0.6)
 
     # Add labels for every 5 years
     for i in range(0, lifespan + 1, 5):
-        angle = 2 * np.pi * i / lifespan
+        angle = 2 * np.pi * i / lifespan - np.pi / 2
         x, y = np.cos(angle), np.sin(angle)
         ax.text(x * 1.2, y * 1.2, str(i), ha="center", va="center", fontsize=10, color="#555")
 
     # Add the "hand" of the clock
-    angle = 2 * np.pi * current_age / lifespan
+    angle = 2 * np.pi * current_age / lifespan - np.pi / 2
     ax.plot([0, np.cos(angle)], [0, np.sin(angle)], color="black", linewidth=3)
 
     # Styling
