@@ -1,145 +1,47 @@
 import streamlit as st
-import math
-import matplotlib.pyplot as plt
-import numpy as np
-from datetime import datetime
 
-# Page configuration
-st.set_page_config(page_title="Life Watch", layout="wide")
+# Title of the app
+st.title("Life Charging Bar ⚡")
+st.subheader("Check Your Life's Charging Status Instead of Your Phone's!")
 
-# Sidebar Inputs
-def user_inputs():
-    st.sidebar.header("🌟 Life Inputs")
-    current_age = st.sidebar.number_input(
-        "Enter your current age:", min_value=0, max_value=120, value=25, step=1
-    )
-    lifespan = st.sidebar.number_input(
-        "Enter your expected lifespan:", min_value=1, max_value=120, value=70, step=1
-    )
-    return current_age, lifespan
+# Introduction
+st.write("""
+Every morning, we check our phone's battery to see if it needs charging. 
+But what about our own lives? Are we charging ourselves with skills, positivity, and growth?
+Use this app to reflect on your life, skills, and personality. Let's check your **Life Charging Bar**!
+""")
 
-# Title with Rectangular Box
-def draw_title_with_clock():
-    # Draw rectangular box for the title
-    st.markdown(
-        """
-        <div style='background-color:#4CAF50;padding:10px;border-radius:5px;text-align:center;'>
-            <h1 style='color:white;margin:0;'>Life Watch</h1>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    
-    # Display a small digital clock
-    now = datetime.now()
-    current_time = now.strftime("%Y-%m-%d %H:%M:%S")
-    st.markdown(
-        f"""
-        <div style='text-align:center;font-size:16px;margin-top:5px;color:gray;'>
-            🕒 Current Time: {current_time}
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+# Section 1: Life Reflection
+st.header("1. Reflect on Your Life")
+life_energy = st.slider("How energized do you feel about your life right now? (0 = Empty, 100 = Fully Charged)", 0, 100, 50)
+st.write(f"Your Life Energy: **{life_energy}%**")
 
-# Realistic Circular Life Watch
-def draw_real_watch(current_age, lifespan):
-    # Calculate percentage of life lived
-    life_percentage = current_age / lifespan
+# Section 2: Skills and Abilities
+st.header("2. Assess Your Skills and Abilities")
+skill_level = st.slider("How confident are you in your current skills and abilities? (0 = Not Confident, 100 = Very Confident)", 0, 100, 50)
+st.write(f"Your Skill Confidence: **{skill_level}%**")
 
-    # Adjust theta to start from zero at the bottom of the clock (6 o'clock position)
-    theta = np.linspace(0, 2 * np.pi, 1000) + np.pi / 2
+# Section 3: Personality and Growth
+st.header("3. Evaluate Your Personality and Growth")
+growth_level = st.slider("How much do you feel you've grown as a person in the last year? (0 = No Growth, 100 = Significant Growth)", 0, 100, 50)
+st.write(f"Your Personal Growth: **{growth_level}%**")
 
-    # Create the figure
-    fig, ax = plt.subplots(figsize=(6, 6))
-    ax.axis("equal")
+# Calculate Overall Life Charging Bar
+overall_charge = (life_energy + skill_level + growth_level) // 3
+st.header("Your Life Charging Bar")
+st.progress(overall_charge)
+st.write(f"Your Overall Life Charge: **{overall_charge}%**")
 
-    # Create life segments: passed (red) and remaining (green)
-    theta_passed = np.linspace(0, 2 * np.pi * life_percentage, 500) + np.pi / 2
-    theta_remaining = np.linspace(2 * np.pi * life_percentage, 2 * np.pi, 500) + np.pi / 2
-    ax.fill_between(np.cos(theta_passed), np.sin(theta_passed), color="red", alpha=0.6, label="Life Lived")
-    ax.fill_between(np.cos(theta_remaining), np.sin(theta_remaining), color="green", alpha=0.6, label="Remaining Life")
+# Feedback and Suggestions
+st.header("4. Suggestions to Recharge Your Life")
+if overall_charge < 30:
+    st.error("Your life charge is low. Consider taking time to reflect, learn new skills, and focus on personal growth.")
+elif overall_charge < 70:
+    st.warning("Your life charge is moderate. Keep pushing forward, but don't forget to take breaks and recharge.")
+else:
+    st.success("Your life charge is high! You're doing great. Keep up the good work and continue growing!")
 
-    # Draw outer ring (clock border)
-    outer_circle = plt.Circle((0, 0), 1.02, color="black", fill=False, linewidth=2)
-    ax.add_artist(outer_circle)
-
-    # Add tick marks for each year
-    for i in range(lifespan + 1):
-        angle = 2 * np.pi * i / lifespan + np.pi / 2
-        x_start, y_start = np.cos(angle) * 0.95, np.sin(angle) * 0.95
-        x_end, y_end = np.cos(angle), np.sin(angle)
-        ax.plot([x_start, x_end], [y_start, y_end], color="black", linewidth=1)
-
-    # Add labels every 5 years
-    for i in range(0, lifespan + 1, 5):
-        angle = 2 * np.pi * i / lifespan + np.pi / 2
-        x, y = np.cos(angle) * 1.2, np.sin(angle) * 1.2
-        ax.text(x, y, str(i), ha="center", va="center", fontsize=10, color="black")
-
-    # Add clock hand for the current age
-    angle = 2 * np.pi * current_age / lifespan + np.pi / 2
-    ax.plot([0, np.cos(angle)], [0, np.sin(angle)], color="black", linewidth=3)
-
-    # Add legend
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.1), fontsize=10, frameon=False)
-
-    # Styling
-    ax.set_title("⏳ Life Watch", fontsize=16, pad=20)
-    ax.axis("off")  # Hide axes
-    return fig
-
-# Main Application
-def main():
-    # Display Title and Clock
-    draw_title_with_clock()
-
-    # Get user inputs
-    current_age, lifespan = user_inputs()
-
-    # Calculate remaining life stats
-    remaining_years = lifespan - current_age
-    remaining_days = remaining_years * 365
-    percentage_lived = (current_age / lifespan) * 100
-    percentage_left = 100 - percentage_lived
-
-    # Application layout
-    st.write("### A daily reminder to cherish your life's moments.")
-    st.markdown("---")
-
-    # Layout with columns
-    col1, col2 = st.columns([2, 1])
-
-    with col1:
-        # Life Visualization
-        st.markdown("#### 🕒 Life Visualization")
-        fig = draw_real_watch(current_age, lifespan)
-        st.pyplot(fig)
-
-    with col2:
-        # Life Stats
-        st.markdown("#### 📊 Life Stats")
-        st.markdown(
-            f"""
-            - **Current Age:** {current_age} years  
-            - **Expected Lifespan:** {lifespan} years  
-            - **Remaining Years:** {remaining_years} years  
-            - **Remaining Days:** {remaining_days:,} days  
-            """
-        )
-        st.markdown("#### 🔋 Life Battery")
-        st.progress(math.floor(percentage_lived))
-        st.markdown(f"**{percentage_lived:.2f}% Lived**  |  **{percentage_left:.2f}% Left**")
-
-        # Motivational Message
-        st.markdown("---")
-        st.markdown(
-            """
-            ### 🌟 Reflect on This
-            Life is precious. Use each moment to grow, connect, and make meaningful memories.
-            """
-        )
-
-# Run the application
-if __name__ == "__main__":
-    main()
+# Footer
+st.write("---")
+st.write("Made with ❤️ by [Your Name]")
+st.write("Inspired by the idea of focusing on life's charging bar instead of your phone's.")
