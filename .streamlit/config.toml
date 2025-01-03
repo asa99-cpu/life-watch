@@ -1,0 +1,9 @@
+[server]
+headless = true
+
+[browser]
+serverAddress = "0.0.0.0"
+serverPort = 8501
+
+[runner]
+mainModule = "app"
