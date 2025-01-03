@@ -62,70 +62,6 @@ def create_radial_bar(passed_time, total_time):
     plt.title("Life Clock (Radial Bar)", fontsize=16, pad=20)
     return fig
 
-def create_donut_chart(passed_time, remaining_time):
-    """
-    Create a donut chart to visualize passed and remaining time.
-    """
-    fig, ax = plt.subplots(figsize=(6, 6), facecolor=BACKGROUND_COLOR)
-    sizes = [passed_time, remaining_time]
-    colors = [PASSED_COLOR, REMAINING_COLOR]
-    wedges, texts, autotexts = ax.pie(
-        sizes,
-        colors=colors,
-        startangle=90,
-        counterclock=False,
-        wedgeprops=dict(width=0.5, edgecolor='black', linewidth=2),
-        autopct='%1.1f%%',
-        textprops=dict(color="black", fontsize=12)
-    )
-    ax.axis('equal')
-    plt.title("Life Clock (Donut Chart)", fontsize=16, pad=20)
-    return fig
-
-def create_progress_ring(passed_time, total_time):
-    """
-    Create a progress ring to visualize passed and remaining time.
-    """
-    fig, ax = plt.subplots(figsize=(6, 6), facecolor=BACKGROUND_COLOR)
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-    
-    # Draw the background circle
-    background_circle = plt.Circle((0.5, 0.5), 0.4, color='lightgray', fill=False, linewidth=10)
-    ax.add_artist(background_circle)
-    
-    # Calculate the angle for the progress ring
-    progress = passed_time / total_time
-    end_angle = 360 * progress
-    
-    # Draw the progress ring using Wedge
-    wedge = Wedge(
-        center=(0.5, 0.5),
-        r=0.4,
-        theta1=0,
-        theta2=end_angle,
-        color=REMAINING_COLOR,
-        width=0.1,
-        alpha=0.8
-    )
-    ax.add_artist(wedge)
-    
-    # Draw the remaining time ring
-    remaining_wedge = Wedge(
-        center=(0.5, 0.5),
-        r=0.4,
-        theta1=end_angle,
-        theta2=360,
-        color=PASSED_COLOR,
-        width=0.1,
-        alpha=0.8
-    )
-    ax.add_artist(remaining_wedge)
-    
-    ax.axis('off')
-    plt.title("Life Clock (Progress Ring)", fontsize=16, pad=20)
-    return fig
-
 def create_life_watch(passed_time, remaining_time, desired_age):
     """
     Create a watch-like visualization to show passed and remaining time.
@@ -150,7 +86,7 @@ def create_life_watch(passed_time, remaining_time, desired_age):
         r=1,
         theta1=90,  # Start at the top (12 o'clock position)
         theta2=90 - passed_angle,  # Move clockwise
-        color="#FF6B6B",  # Red
+        color=PASSED_COLOR,  # Red
         alpha=0.8
     )
     ax.add_artist(passed_wedge)
@@ -161,7 +97,7 @@ def create_life_watch(passed_time, remaining_time, desired_age):
         r=1,
         theta1=90 - passed_angle,  # Start where passed time ends
         theta2=90 - 360,  # Move clockwise to complete the circle
-        color="#4ECDC4",  # Green
+        color=REMAINING_COLOR,  # Green
         alpha=0.8
     )
     ax.add_artist(remaining_wedge)
@@ -172,50 +108,7 @@ def create_life_watch(passed_time, remaining_time, desired_age):
 
     # Add labels for passed and remaining time
     ax.text(0, 1.1, f"Desired Age: {desired_age}", fontsize=14, ha="center", va="center", color="black")
-    ax.text(0, -1.1, f"Passed: {passed_time} years", fontsize=12, ha="center", va="center", color="#FF6B6B")
-    ax.text(0, -1.25, f"Remaining: {remaining_time} years", fontsize=12, ha="center", va="center", color="#4ECDC4")
+    ax.text(0, -1.1, f"Passed: {passed_time} years", fontsize=12, ha="center", va="center", color=PASSED_COLOR)
+    ax.text(0, -1.25, f"Remaining: {remaining_time} years", fontsize=12, ha="center", va="center", color=REMAINING_COLOR)
 
-    return fig
-
-def create_gradient_visualization(passed_time, total_time):
-    """
-    Create a gradient-based visualization to show passed and remaining time.
-    """
-    fig, ax = plt.subplots(figsize=(6, 6), facecolor=BACKGROUND_COLOR)
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-    
-    # Create a gradient background
-    gradient = np.linspace(0, 1, 256).reshape(1, -1)
-    gradient = np.vstack((gradient, gradient))
-    ax.imshow(gradient, aspect='auto', cmap=gradient_cmap, extent=[0, 1, 0, 1])
-    
-    # Add a progress bar
-    progress = passed_time / total_time
-    ax.barh(0.5, progress, height=0.2, color=PASSED_COLOR, edgecolor='black', linewidth=2)
-    ax.barh(0.5, 1 - progress, height=0.2, left=progress, color=REMAINING_COLOR, edgecolor='black', linewidth=2)
-    
-    ax.axis('off')
-    plt.title("Life Clock (Gradient Visualization)", fontsize=16, pad=20)
-    return fig
-
-def create_timeline(passed_time, remaining_time):
-    """
-    Create a timeline visualization to show passed and remaining time.
-    """
-    fig, ax = plt.subplots(figsize=(10, 2), facecolor=BACKGROUND_COLOR)
-    total_time = passed_time + remaining_time
-    
-    # Draw the timeline
-    ax.barh(0, passed_time, height=0.5, color=PASSED_COLOR, edgecolor='black', linewidth=2)
-    ax.barh(0, remaining_time, height=0.5, left=passed_time, color=REMAINING_COLOR, edgecolor='black', linewidth=2)
-    
-    # Add labels
-    ax.text(passed_time / 2, 0.25, f"Passed: {passed_time} years", fontsize=12, ha="center", va="center", color="black")
-    ax.text(passed_time + remaining_time / 2, 0.25, f"Remaining: {remaining_time} years", fontsize=12, ha="center", va="center", color="black")
-    
-    ax.set_xlim(0, total_time)
-    ax.set_ylim(-0.5, 0.5)
-    ax.axis('off')
-    plt.title("Life Clock (Timeline)", fontsize=16, pad=20)
     return fig
