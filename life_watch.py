@@ -3,20 +3,10 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
+from sidebar import user_inputs  # Importing sidebar function from sidebar.py
 
 # Set page configuration
 st.set_page_config(page_title="Life Watch", layout="wide")
-
-# Sidebar inputs
-def user_inputs():
-    st.sidebar.header("🌟 Life Inputs")
-    current_age = st.sidebar.number_input(
-        "Enter your current age:", min_value=0, max_value=120, value=25, step=1
-    )
-    lifespan = st.sidebar.number_input(
-        "Enter your expected lifespan:", min_value=1, max_value=120, value=70, step=1
-    )
-    return current_age, lifespan
 
 # Real-Time Clock Display
 def real_time_clock():
@@ -28,7 +18,6 @@ def real_time_clock():
 
 # Realistic Circular Life Watch
 def draw_real_watch(current_age, lifespan):
-    # Ensure zero is at the bottom of the watch (6 o'clock position)
     life_percentage = current_age / lifespan
     theta = np.linspace(0, 2 * np.pi, 1000) - np.pi / 2  # Adjust to start from bottom
 
@@ -73,7 +62,7 @@ def draw_real_watch(current_age, lifespan):
 
 # Main application
 def main():
-    current_age, lifespan = user_inputs()
+    current_age, lifespan = user_inputs()  # Fetch user input from sidebar
     remaining_years = lifespan - current_age
     remaining_days = remaining_years * 365
     percentage_lived = (current_age / lifespan) * 100
