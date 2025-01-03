@@ -1,9 +1,6 @@
 import streamlit as st
 from sidebar import sidebar_inputs, display_dropdown, display_theme_selector, display_about_section, display_footer
-from visualizations import (
-    create_pie_chart, create_bar_chart,
-    create_radial_bar, create_donut_chart, create_progress_ring, create_life_watch
-)
+from visualizations import create_life_watch, create_timeline  # Updated imports
 from utils import (
     calculate_time, calculate_time_breakdown,
     initialize_session_state, display_intro,
@@ -78,22 +75,14 @@ if theme == "Dark":
         unsafe_allow_html=True
     )
 
-# Display dropdown menu
+# Display dropdown menu for visualization style
 watch_style = display_dropdown()
 
 # Create and display the selected life clock style
-if watch_style == "Pie Chart":
-    fig = create_pie_chart(passed_time, remaining_time)
-elif watch_style == "Bar Chart":
-    fig = create_bar_chart(passed_time, remaining_time)
-elif watch_style == "Radial Bar":
-    fig = create_radial_bar(passed_time, total_time)
-elif watch_style == "Donut Chart":
-    fig = create_donut_chart(passed_time, remaining_time)
-elif watch_style == "Progress Ring":
-    fig = create_progress_ring(passed_time, total_time)
-elif watch_style == "Life Watch":
+if watch_style == "Life Watch":
     fig = create_life_watch(passed_time, remaining_time, st.session_state.desired_age)
+elif watch_style == "Timeline":
+    fig = create_timeline(passed_time, remaining_time)
 
 # Display the visualization
 st.pyplot(fig)
