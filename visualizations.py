@@ -7,46 +7,10 @@ PASSED_COLOR = "#FF6B6B"  # Red
 REMAINING_COLOR = "#4ECDC4"  # Green
 BACKGROUND_COLOR = "#F0F0F0"  # Light gray
 
-def create_pie_chart(passed_time, remaining_time):
-    """
-    Create a pie chart to visualize passed and remaining time.
-    """
-    fig, ax = plt.subplots(figsize=(6, 6), facecolor=BACKGROUND_COLOR)
-    sizes = [passed_time, remaining_time]
-    colors = [PASSED_COLOR, REMAINING_COLOR]
-    wedges, texts, autotexts = ax.pie(
-        sizes,
-        colors=colors,
-        startangle=90,
-        counterclock=False,
-        wedgeprops=dict(width=0.3, edgecolor='black', linewidth=2),
-        autopct='%1.1f%%',
-        textprops=dict(color="black", fontsize=12)
-    )
-    # Add a white circle in the center to make it a donut chart
-    centre_circle = plt.Circle((0, 0), 0.70, fc='white', edgecolor='black', linewidth=2)
-    fig.gca().add_artist(centre_circle)
-    ax.axis('equal')
-    plt.title("Life Clock (Pie Chart)", fontsize=16, pad=20)
-    return fig
-
-def create_bar_chart(passed_time, remaining_time):
-    """
-    Create a horizontal bar chart to visualize passed and remaining time.
-    """
-    fig, ax = plt.subplots(figsize=(8, 4), facecolor=BACKGROUND_COLOR)
-    categories = ['Passed Time', 'Remaining Time']
-    values = [passed_time, remaining_time]
-    colors = [PASSED_COLOR, REMAINING_COLOR]
-    ax.barh(categories, values, color=colors, edgecolor='black', linewidth=2)
-    ax.set_xlabel('Years', fontsize=14)
-    ax.set_title('Life Clock (Bar Chart)', fontsize=16, pad=20)
-    ax.tick_params(axis='both', labelsize=12)
-    return fig
-
 def create_life_watch(passed_time, remaining_time, desired_age):
     """
     Create a watch-like visualization to show passed and remaining time.
+    This is the main visualization and is kept as the primary focus.
     """
     fig, ax = plt.subplots(figsize=(6, 6), facecolor=BACKGROUND_COLOR)
     ax.set_xlim(-1.2, 1.2)
@@ -68,7 +32,7 @@ def create_life_watch(passed_time, remaining_time, desired_age):
         r=1,
         theta1=90,  # Start at the top (12 o'clock position)
         theta2=90 - passed_angle,  # Move clockwise
-        color=PASSED_COLOR,
+        color=PASSED_COLOR,  # Red
         alpha=0.8
     )
     ax.add_artist(passed_wedge)
@@ -79,7 +43,7 @@ def create_life_watch(passed_time, remaining_time, desired_age):
         r=1,
         theta1=90 - passed_angle,  # Start where passed time ends
         theta2=90 - 360,  # Move clockwise to complete the circle
-        color=REMAINING_COLOR,
+        color=REMAINING_COLOR,  # Green
         alpha=0.8
     )
     ax.add_artist(remaining_wedge)
@@ -93,4 +57,26 @@ def create_life_watch(passed_time, remaining_time, desired_age):
     ax.text(0, -1.1, f"Passed: {passed_time} years", fontsize=12, ha="center", va="center", color=PASSED_COLOR)
     ax.text(0, -1.25, f"Remaining: {remaining_time} years", fontsize=12, ha="center", va="center", color=REMAINING_COLOR)
 
+    return fig
+
+def create_timeline(passed_time, remaining_time):
+    """
+    Create a simple timeline visualization to show passed and remaining time.
+    This is a secondary visualization that complements the life watch.
+    """
+    fig, ax = plt.subplots(figsize=(10, 2), facecolor=BACKGROUND_COLOR)
+    total_time = passed_time + remaining_time
+    
+    # Draw the timeline
+    ax.barh(0, passed_time, height=0.5, color=PASSED_COLOR, edgecolor='black', linewidth=2)
+    ax.barh(0, remaining_time, height=0.5, left=passed_time, color=REMAINING_COLOR, edgecolor='black', linewidth=2)
+    
+    # Add labels
+    ax.text(passed_time / 2, 0.25, f"Passed: {passed_time} years", fontsize=12, ha="center", va="center", color="black")
+    ax.text(passed_time + remaining_time / 2, 0.25, f"Remaining: {remaining_time} years", fontsize=12, ha="center", va="center", color="black")
+    
+    ax.set_xlim(0, total_time)
+    ax.set_ylim(-0.5, 0.5)
+    ax.axis('off')
+    plt.title("Life Clock (Timeline)", fontsize=16, pad=20)
     return fig
