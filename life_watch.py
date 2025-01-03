@@ -1,118 +1,117 @@
 import streamlit as st
-import math
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
 
-# Set page configuration at the very beginning
-st.set_page_config(page_title="Life Watch", layout="wide")
+# Set page configuration
+st.set_page_config(page_title="Daily Life Battery", layout="wide")
 
-# Sidebar inputs
+# Sidebar Inputs
 def user_inputs():
-    st.sidebar.header("Life Inputs")
-    current_age = st.sidebar.number_input("Enter your current age:", min_value=0, max_value=120, value=25, step=1)
-    lifespan = st.sidebar.number_input("Enter your expected lifespan:", min_value=1, max_value=120, value=70, step=1)
-    return current_age, lifespan
+    st.sidebar.title("🔋 Life Battery Assessment")
+    st.sidebar.markdown("Rate yourself on the following aspects (0–100):")
+    
+    physical = st.sidebar.slider("Physical Energy:", 0, 100, 50)
+    mental = st.sidebar.slider("Mental Energy:", 0, 100, 50)
+    emotional = st.sidebar.slider("Emotional Balance:", 0, 100, 50)
+    skills = st.sidebar.slider("Skill Utilization:", 0, 100, 50)
+    
+    return physical, mental, emotional, skills
 
-# Real-Time Clock Display
-def real_time_clock():
-    now = datetime.now()
-    current_time = now.strftime("%Y-%m-%d %H:%M:%S")
-    st.subheader("🕒 Real-Time Clock")
-    st.markdown(f"**Current Date and Time:** {current_time}")
-    st.markdown("---")
-
-# Circular Life Watch with different colors for passed and remaining life
-def draw_life_watch(current_age, lifespan):
-    life_percentage = current_age / lifespan
+# Draw Battery Visualization
+def draw_battery(physical, mental, emotional, skills):
+    labels = ["Physical", "Mental", "Emotional", "Skills"]
+    values = [physical, mental, emotional, skills]
+    
+    # Calculate overall score
+    overall = np.mean(values)
+    
+    # Create figure
     fig, ax = plt.subplots(figsize=(6, 6))
-    ax.axis("equal")
+    wedges, texts, autotexts = ax.pie(
+        values,
+        labels=labels,
+        autopct="%1.1f%%",
+        startangle=90,
+        colors=["#FF6F61", "#6B8E23", "#FFD700", "#4682B4"],
+    )
+    
+    # Title and styling
+    ax.set_title("🔋 Life Battery Breakdown", fontsize=16)
+    for text in texts + autotexts:
+        text.set_color("black")
+        text.set_fontsize(12)
+    
+    return fig, overall
 
-    # Create the "clock"
-    theta = np.linspace(0, 2 * np.pi, 1000)
+# Suggestions for Users
+def provide_suggestions(overall):
+    st.markdown("### Suggestions for Today 🌟")
+    
+    if overall > 80:
+        st.success("Your life battery is charged! Keep up the great work and maintain your habits.")
+    elif 50 <= overall <= 80:
+        st.info("You're doing well, but consider focusing on areas with lower scores to recharge further.")
+    else:
+        st.warning("Your life battery is low. Take time for self-care, relaxation, and skill-building.")
 
-    # Create the passed life (red)
-    ax.fill_between(np.cos(theta), np.sin(theta), where=(theta <= 2 * np.pi * life_percentage), color="red", alpha=0.6)
-
-    # Create the remaining life (green)
-    ax.fill_between(np.cos(theta), np.sin(theta), where=(theta > 2 * np.pi * life_percentage), color="green", alpha=0.6)
-
-    # Add labels
-    for i in range(0, lifespan + 1, 5):  # Tick every 5 years
-        angle = 2 * np.pi * i / lifespan
-        x, y = np.cos(angle), np.sin(angle)
-        ax.text(x * 1.1, y * 1.1, f"{i}", ha="center", va="center", fontsize=10, color="#555")
-
-    # Add the "hand" of the clock
-    angle = 2 * np.pi * current_age / lifespan
-    ax.plot([0, np.cos(angle)], [0, np.sin(angle)], color="red", linewidth=2, label="Current Age")
-
-    # Styling
-    ax.set_title("Circular Life Watch", fontsize=16)
-    ax.legend(loc="upper right")
-    ax.axis("off")  # Remove axes
-    return fig
-
-# Main application
-def main():
-    # Get user inputs
-    current_age, lifespan = user_inputs()
-    remaining_years = lifespan - current_age
-    remaining_days = remaining_years * 365
-    percentage_lived = (current_age / lifespan) * 100
-    percentage_left = 100 - percentage_lived
-
-    # Title and Clock
-    st.title("⏰ Your Life Watch")
-    st.write("**A reminder of how precious time is.**")
-    real_time_clock()
-
-    # Life Watch Visualizations
-    col1, col2 = st.columns([2, 1])
-
-    with col1:
-        # Circular Life Watch
-        st.subheader("🕒 Circular Life Watch")
-        fig = draw_life_watch(current_age, lifespan)
-        st.pyplot(fig)
-
-    with col2:
-        # Life Summary Stats
-        st.subheader("🔵 Life Stats")
-        st.markdown(
-            f"""
-            - **Current Age:** {current_age} years  
-            - **Expected Lifespan:** {lifespan} years  
-            - **Remaining Time:**  
-                - **Years:** {remaining_years}  
-                - **Days:** {remaining_days:,}  
-            """
-        )
-
-        # Life Battery Bar
-        st.subheader("🔋 Life Battery")
-        st.progress(math.floor(percentage_left))
-        st.markdown(
-            f"""
-            - **Life Lived:** {percentage_lived:.2f}%  
-            - **Life Left:** {percentage_left:.2f}%  
-            """
-        )
-
-        # Charging Bar for Remaining Life
-        st.subheader("🔌 Charging Bar (Remaining Life)")
-        st.progress(math.floor(percentage_left))
-        st.markdown(f"**Charging Status:** Remaining life at **{percentage_left:.2f}%**")
-
-    # Motivational Message
     st.markdown(
         """
-        ---
-        ### Reflect on this
-        Every second is precious. Use your time wisely, make meaningful connections, and embrace life's journey.
+        #### Tips for Improvement:
+        - **Physical Energy:** Try exercise, hydration, or a healthy meal.  
+        - **Mental Energy:** Take breaks, meditate, or tackle a challenging task.  
+        - **Emotional Balance:** Spend time with loved ones, journal, or practice gratitude.  
+        - **Skill Utilization:** Work on a personal project or learn something new.  
         """
     )
 
-# Run the main application
+# Real-Time Clock
+def display_clock():
+    now = datetime.now()
+    st.markdown(f"**🕒 Current Time:** {now.strftime('%Y-%m-%d %H:%M:%S')}")
+
+# Main Function
+def main():
+    # Inputs
+    physical, mental, emotional, skills = user_inputs()
+    
+    # Main Dashboard
+    st.title("🔋 Daily Life Battery Dashboard")
+    st.write("**Reflect on your life energy and take meaningful actions to recharge!**")
+    display_clock()
+    
+    # Visualization and Insights
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.subheader("🔋 Life Battery Visualization")
+        fig, overall = draw_battery(physical, mental, emotional, skills)
+        st.pyplot(fig)
+    
+    with col2:
+        st.subheader("📊 Your Scores")
+        st.markdown(
+            f"""
+            - **Physical Energy:** {physical}%  
+            - **Mental Energy:** {mental}%  
+            - **Emotional Balance:** {emotional}%  
+            - **Skill Utilization:** {skills}%  
+            - **Overall Life Battery:** {overall:.2f}%  
+            """
+        )
+    
+    # Suggestions
+    provide_suggestions(overall)
+    
+    # Motivational Quote
+    st.markdown(
+        """
+        ---
+        ### 🌈 Daily Motivation  
+        _"The key is not to prioritize what's on your schedule, but to schedule your priorities."_  
+        """
+    )
+
+# Run the App
 if __name__ == "__main__":
     main()
