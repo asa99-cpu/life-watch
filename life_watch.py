@@ -1,4 +1,5 @@
 import streamlit as st
+from datetime import datetime, timedelta
 
 # Title of the app
 st.title("Life Charging Bar ⚡")
@@ -10,6 +11,26 @@ Every morning, we check our phone's battery to see if it needs charging.
 But what about our own lives? Are we charging ourselves with skills, positivity, and growth?
 Use this app to reflect on your life, skills, and personality. Let's check your **Life Charging Bar**!
 """)
+
+# Sidebar for Age Input
+st.sidebar.header("Life Clock Settings ⏳")
+current_age = st.sidebar.number_input("What is your current age?", min_value=0, max_value=120, value=25)
+desired_age = st.sidebar.number_input("What is the age you wish to live to?", min_value=current_age + 1, max_value=150, value=80)
+
+# Calculate Time Left
+current_time = datetime.now()
+years_left = desired_age - current_age
+days_left = years_left * 365
+hours_left = days_left * 24
+minutes_left = hours_left * 60
+
+# Display Life Clock
+st.sidebar.write("---")
+st.sidebar.header("Your Life Clock ⏰")
+st.sidebar.write(f"Years Left: **{years_left}**")
+st.sidebar.write(f"Days Left: **{days_left}**")
+st.sidebar.write(f"Hours Left: **{hours_left}**")
+st.sidebar.write(f"Minutes Left: **{minutes_left}**")
 
 # Section 1: Life Reflection
 st.header("1. Reflect on Your Life")
