@@ -1,16 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Wedge, Circle
-from matplotlib.colors import LinearSegmentedColormap
 
 # Custom colors for visualizations
 PASSED_COLOR = "#FF6B6B"  # Red
 REMAINING_COLOR = "#4ECDC4"  # Green
 BACKGROUND_COLOR = "#F0F0F0"  # Light gray
-
-# Create a custom colormap for gradient effects
-gradient_colors = [PASSED_COLOR, REMAINING_COLOR]
-gradient_cmap = LinearSegmentedColormap.from_list("custom_gradient", gradient_colors)
 
 def create_pie_chart(passed_time, remaining_time):
     """
@@ -49,24 +44,11 @@ def create_bar_chart(passed_time, remaining_time):
     ax.tick_params(axis='both', labelsize=12)
     return fig
 
-def create_radial_bar(passed_time, total_time):
-    """
-    Create a radial bar chart to visualize passed and remaining time.
-    """
-    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True), facecolor=BACKGROUND_COLOR)
-    theta = np.linspace(0, 2 * np.pi, 100)
-    ax.fill_between(theta, 0, passed_time / total_time * 100, color=PASSED_COLOR, alpha=0.8)
-    ax.fill_between(theta, passed_time / total_time * 100, 100, color=REMAINING_COLOR, alpha=0.8)
-    ax.set_yticklabels([])
-    ax.set_xticklabels([])
-    plt.title("Life Clock (Radial Bar)", fontsize=16, pad=20)
-    return fig
-
 def create_life_watch(passed_time, remaining_time, desired_age):
     """
     Create a watch-like visualization to show passed and remaining time.
     """
-    fig, ax = plt.subplots(figsize=(6, 6), facecolor="#F0F0F0")
+    fig, ax = plt.subplots(figsize=(6, 6), facecolor=BACKGROUND_COLOR)
     ax.set_xlim(-1.2, 1.2)
     ax.set_ylim(-1.2, 1.2)
     ax.axis("off")  # Hide axes
@@ -86,7 +68,7 @@ def create_life_watch(passed_time, remaining_time, desired_age):
         r=1,
         theta1=90,  # Start at the top (12 o'clock position)
         theta2=90 - passed_angle,  # Move clockwise
-        color=PASSED_COLOR,  # Red
+        color=PASSED_COLOR,
         alpha=0.8
     )
     ax.add_artist(passed_wedge)
@@ -97,7 +79,7 @@ def create_life_watch(passed_time, remaining_time, desired_age):
         r=1,
         theta1=90 - passed_angle,  # Start where passed time ends
         theta2=90 - 360,  # Move clockwise to complete the circle
-        color=REMAINING_COLOR,  # Green
+        color=REMAINING_COLOR,
         alpha=0.8
     )
     ax.add_artist(remaining_wedge)
