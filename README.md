@@ -1,12 +1,15 @@
-# Life Watch
+# Life Charging Bar ⚡
 
-Life Watch is an interactive tool to visualize your life progress. You input your expected lifespan and current age, and it displays:
-- The years you have lived and remaining years.
-- A visual watch showing your life progress.
-- A "life battery" indicating your remaining energy.
+A Streamlit app to visualize your life's "charging bar" and reflect on your time.
+
+## Features
+
+- **Life Clock**: Visualize your life as a clock with different styles (Pie Chart, Bar Chart, Radial Bar, Donut Chart, Progress Ring).
+- **Sidebar Inputs**: Enter your current age and desired lifespan.
+- **Dynamic Updates**: The visualization updates in real-time based on your inputs.
 
 ## How to Run
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/Life-Watch.git
+   git clone https://github.com/your-username/life-watch-app.git
