@@ -2,7 +2,7 @@ import streamlit as st
 from sidebar import sidebar_inputs, display_dropdown, display_theme_selector, display_about_section, display_footer
 from visualizations import (
     create_pie_chart, create_bar_chart,
-    create_radial_bar, create_donut_chart, create_progress_ring
+    create_radial_bar, create_donut_chart, create_progress_ring, create_life_watch
 )
 from utils import (
     calculate_time, calculate_time_breakdown,
@@ -92,6 +92,8 @@ elif watch_style == "Donut Chart":
     fig = create_donut_chart(passed_time, remaining_time)
 elif watch_style == "Progress Ring":
     fig = create_progress_ring(passed_time, total_time)
+elif watch_style == "Life Watch":
+    fig = create_life_watch(passed_time, remaining_time, st.session_state.desired_age)
 
 # Display the visualization
 st.pyplot(fig)
