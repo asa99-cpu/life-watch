@@ -1,6 +1,9 @@
 import streamlit as st
 from sidebar import sidebar_inputs, display_dropdown, display_theme_selector, display_about_section, display_footer
-from visualizations import create_life_watch, create_timeline  # Updated imports
+from visualizations import (
+    create_pie_chart, create_bar_chart, create_radial_bar,
+    create_donut_chart, create_progress_ring, create_life_watch, create_timeline
+)
 from utils import (
     calculate_time, calculate_time_breakdown,
     initialize_session_state, display_intro,
@@ -76,30 +79,4 @@ if theme == "Dark":
     )
 
 # Display dropdown menu for visualization style
-watch_style = display_dropdown()
-
-# Create and display the selected life clock style
-fig = None  # Initialize fig to avoid NameError
-if watch_style == "Life Watch":
-    fig = create_life_watch(passed_time, remaining_time, st.session_state.desired_age)
-elif watch_style == "Timeline":
-    fig = create_timeline(passed_time, remaining_time)
-
-# Display the visualization if fig is defined
-if fig is not None:
-    st.pyplot(fig)
-else:
-    st.error("No visualization selected. Please choose a valid option.")
-
-# Display detailed time breakdown
-st.markdown("### Time Breakdown")
-passed_breakdown, remaining_breakdown = calculate_time_breakdown(
-    st.session_state.current_age, st.session_state.desired_age
-)
-display_time_breakdown(passed_breakdown, remaining_breakdown)
-
-# Display about section
-display_about_section()
-
-# Display footer
-display_footer()
+watch
