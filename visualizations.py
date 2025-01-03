@@ -1,11 +1,16 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Wedge, Circle
+from matplotlib.colors import LinearSegmentedColormap
 
 # Custom colors for visualizations
 PASSED_COLOR = "#FF6B6B"  # Red
 REMAINING_COLOR = "#4ECDC4"  # Green
 BACKGROUND_COLOR = "#F0F0F0"  # Light gray
+
+# Create a custom colormap for gradient effects
+gradient_colors = [PASSED_COLOR, REMAINING_COLOR]
+gradient_cmap = LinearSegmentedColormap.from_list("custom_gradient", gradient_colors)
 
 def create_pie_chart(passed_time, remaining_time):
     """
@@ -170,4 +175,47 @@ def create_life_watch(passed_time, remaining_time, desired_age):
     ax.text(0, -1.1, f"Passed: {passed_time} years", fontsize=12, ha="center", va="center", color="#FF6B6B")
     ax.text(0, -1.25, f"Remaining: {remaining_time} years", fontsize=12, ha="center", va="center", color="#4ECDC4")
 
+    return fig
+
+def create_gradient_visualization(passed_time, total_time):
+    """
+    Create a gradient-based visualization to show passed and remaining time.
+    """
+    fig, ax = plt.subplots(figsize=(6, 6), facecolor=BACKGROUND_COLOR)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    
+    # Create a gradient background
+    gradient = np.linspace(0, 1, 256).reshape(1, -1)
+    gradient = np.vstack((gradient, gradient))
+    ax.imshow(gradient, aspect='auto', cmap=gradient_cmap, extent=[0, 1, 0, 1])
+    
+    # Add a progress bar
+    progress = passed_time / total_time
+    ax.barh(0.5, progress, height=0.2, color=PASSED_COLOR, edgecolor='black', linewidth=2)
+    ax.barh(0.5, 1 - progress, height=0.2, left=progress, color=REMAINING_COLOR, edgecolor='black', linewidth=2)
+    
+    ax.axis('off')
+    plt.title("Life Clock (Gradient Visualization)", fontsize=16, pad=20)
+    return fig
+
+def create_timeline(passed_time, remaining_time):
+    """
+    Create a timeline visualization to show passed and remaining time.
+    """
+    fig, ax = plt.subplots(figsize=(10, 2), facecolor=BACKGROUND_COLOR)
+    total_time = passed_time + remaining_time
+    
+    # Draw the timeline
+    ax.barh(0, passed_time, height=0.5, color=PASSED_COLOR, edgecolor='black', linewidth=2)
+    ax.barh(0, remaining_time, height=0.5, left=passed_time, color=REMAINING_COLOR, edgecolor='black', linewidth=2)
+    
+    # Add labels
+    ax.text(passed_time / 2, 0.25, f"Passed: {passed_time} years", fontsize=12, ha="center", va="center", color="black")
+    ax.text(passed_time + remaining_time / 2, 0.25, f"Remaining: {remaining_time} years", fontsize=12, ha="center", va="center", color="black")
+    
+    ax.set_xlim(0, total_time)
+    ax.set_ylim(-0.5, 0.5)
+    ax.axis('off')
+    plt.title("Life Clock (Timeline)", fontsize=16, pad=20)
     return fig
