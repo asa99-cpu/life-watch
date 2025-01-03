@@ -2,8 +2,9 @@ import streamlit as st
 from sidebar import sidebar_inputs, display_dropdown, display_theme_selector, display_about_section, display_footer
 from visualizations import (
     create_pie_chart, create_bar_chart, create_radial_bar,
-    create_donut_chart, create_progress_ring, create_life_watch, create_timeline
+    create_donut_chart, create_progress_ring, create_timeline
 )
+from watch import create_life_watch  # Import from watch.py
 from utils import (
     calculate_time, calculate_time_breakdown,
     initialize_session_state, display_intro,
