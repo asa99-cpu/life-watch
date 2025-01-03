@@ -2,57 +2,86 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Wedge
 
+# Custom colors for visualizations
+PASSED_COLOR = "#FF6B6B"  # Red
+REMAINING_COLOR = "#4ECDC4"  # Green
+BACKGROUND_COLOR = "#F0F0F0"  # Light gray
+
 def create_pie_chart(passed_time, remaining_time):
-    fig, ax = plt.subplots(figsize=(6, 6))
+    """
+    Create a pie chart to visualize passed and remaining time.
+    """
+    fig, ax = plt.subplots(figsize=(6, 6), facecolor=BACKGROUND_COLOR)
     sizes = [passed_time, remaining_time]
-    colors = ['red', 'green']
+    colors = [PASSED_COLOR, REMAINING_COLOR]
     wedges, texts, autotexts = ax.pie(
         sizes,
         colors=colors,
         startangle=90,
         counterclock=False,
-        wedgeprops=dict(width=0.3, edgecolor='black'),
-        autopct='%1.1f%%'
+        wedgeprops=dict(width=0.3, edgecolor='black', linewidth=2),
+        autopct='%1.1f%%',
+        textprops=dict(color="black", fontsize=12)
     )
-    centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+    # Add a white circle in the center to make it a donut chart
+    centre_circle = plt.Circle((0, 0), 0.70, fc='white', edgecolor='black', linewidth=2)
     fig.gca().add_artist(centre_circle)
     ax.axis('equal')
+    plt.title("Life Clock (Pie Chart)", fontsize=16, pad=20)
     return fig
 
 def create_bar_chart(passed_time, remaining_time):
-    fig, ax = plt.subplots(figsize=(8, 4))
-    ax.barh(['Passed Time', 'Remaining Time'], [passed_time, remaining_time], color=['red', 'green'])
-    ax.set_xlabel('Years')
-    ax.set_title('Life Clock (Bar Chart)')
+    """
+    Create a horizontal bar chart to visualize passed and remaining time.
+    """
+    fig, ax = plt.subplots(figsize=(8, 4), facecolor=BACKGROUND_COLOR)
+    categories = ['Passed Time', 'Remaining Time']
+    values = [passed_time, remaining_time]
+    colors = [PASSED_COLOR, REMAINING_COLOR]
+    ax.barh(categories, values, color=colors, edgecolor='black', linewidth=2)
+    ax.set_xlabel('Years', fontsize=14)
+    ax.set_title('Life Clock (Bar Chart)', fontsize=16, pad=20)
+    ax.tick_params(axis='both', labelsize=12)
     return fig
 
 def create_radial_bar(passed_time, total_time):
-    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+    """
+    Create a radial bar chart to visualize passed and remaining time.
+    """
+    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True), facecolor=BACKGROUND_COLOR)
     theta = np.linspace(0, 2 * np.pi, 100)
-    ax.fill_between(theta, 0, passed_time / total_time * 100, color='red')
-    ax.fill_between(theta, passed_time / total_time * 100, 100, color='green')
+    ax.fill_between(theta, 0, passed_time / total_time * 100, color=PASSED_COLOR, alpha=0.8)
+    ax.fill_between(theta, passed_time / total_time * 100, 100, color=REMAINING_COLOR, alpha=0.8)
     ax.set_yticklabels([])
     ax.set_xticklabels([])
-    ax.set_title('Life Clock (Radial Bar)')
+    plt.title("Life Clock (Radial Bar)", fontsize=16, pad=20)
     return fig
 
 def create_donut_chart(passed_time, remaining_time):
-    fig, ax = plt.subplots(figsize=(6, 6))
+    """
+    Create a donut chart to visualize passed and remaining time.
+    """
+    fig, ax = plt.subplots(figsize=(6, 6), facecolor=BACKGROUND_COLOR)
     sizes = [passed_time, remaining_time]
-    colors = ['red', 'green']
+    colors = [PASSED_COLOR, REMAINING_COLOR]
     wedges, texts, autotexts = ax.pie(
         sizes,
         colors=colors,
         startangle=90,
         counterclock=False,
-        wedgeprops=dict(width=0.5, edgecolor='black'),
-        autopct='%1.1f%%'
+        wedgeprops=dict(width=0.5, edgecolor='black', linewidth=2),
+        autopct='%1.1f%%',
+        textprops=dict(color="black", fontsize=12)
     )
     ax.axis('equal')
+    plt.title("Life Clock (Donut Chart)", fontsize=16, pad=20)
     return fig
 
 def create_progress_ring(passed_time, total_time):
-    fig, ax = plt.subplots(figsize=(6, 6))
+    """
+    Create a progress ring to visualize passed and remaining time.
+    """
+    fig, ax = plt.subplots(figsize=(6, 6), facecolor=BACKGROUND_COLOR)
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     
@@ -70,9 +99,9 @@ def create_progress_ring(passed_time, total_time):
         r=0.4,
         theta1=0,
         theta2=end_angle,
-        color='green',
+        color=REMAINING_COLOR,
         width=0.1,
-        alpha=0.5
+        alpha=0.8
     )
     ax.add_artist(wedge)
     
@@ -82,11 +111,12 @@ def create_progress_ring(passed_time, total_time):
         r=0.4,
         theta1=end_angle,
         theta2=360,
-        color='red',
+        color=PASSED_COLOR,
         width=0.1,
-        alpha=0.5
+        alpha=0.8
     )
     ax.add_artist(remaining_wedge)
     
     ax.axis('off')
+    plt.title("Life Clock (Progress Ring)", fontsize=16, pad=20)
     return fig
