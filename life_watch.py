@@ -26,8 +26,8 @@ def real_time_clock():
     st.markdown(f"**Current Date and Time:** {current_time}")
     st.markdown("---")
 
-# Circular Life Watch visualization with zero at the bottom
-def draw_life_watch(current_age, lifespan):
+# Realistic Circular Life Watch
+def draw_real_watch(current_age, lifespan):
     # Percentage of life lived
     life_percentage = current_age / lifespan
 
@@ -38,26 +38,40 @@ def draw_life_watch(current_age, lifespan):
     fig, ax = plt.subplots(figsize=(6, 6))
     ax.axis("equal")
 
-    # Passed life (red section)
+    # Create passed life (red) and remaining life (green)
     theta_passed = np.linspace(0, 2 * np.pi * life_percentage, 500) + np.pi / 2
-    ax.fill_between(np.cos(theta_passed), np.sin(theta_passed), color="red", alpha=0.6)
-
-    # Remaining life (green section)
     theta_remaining = np.linspace(2 * np.pi * life_percentage, 2 * np.pi, 500) + np.pi / 2
+    ax.fill_between(np.cos(theta_passed), np.sin(theta_passed), color="red", alpha=0.6)
     ax.fill_between(np.cos(theta_remaining), np.sin(theta_remaining), color="green", alpha=0.6)
 
-    # Add labels for every 5 years
+    # Draw the outer ring (clock border)
+    outer_circle = plt.Circle((0, 0), 1.02, color="black", fill=False, linewidth=2)
+    ax.add_artist(outer_circle)
+
+    # Add tick marks
+    for i in range(lifespan + 1):
+        angle = 2 * np.pi * i / lifespan + np.pi / 2
+        x_start, y_start = np.cos(angle) * 0.95, np.sin(angle) * 0.95
+        x_end, y_end = np.cos(angle), np.sin(angle)
+        ax.plot([x_start, x_end], [y_start, y_end], color="black", linewidth=1)
+
+    # Add labels (every 5 years)
     for i in range(0, lifespan + 1, 5):
         angle = 2 * np.pi * i / lifespan + np.pi / 2
-        x, y = np.cos(angle), np.sin(angle)
-        ax.text(x * 1.2, y * 1.2, str(i), ha="center", va="center", fontsize=10, color="#555")
+        x, y = np.cos(angle) * 1.2, np.sin(angle) * 1.2
+        if i == 0:
+            ax.text(x, y - 0.05, str(i), ha="center", va="center", fontsize=10, color="black")
+        elif i == lifespan:
+            ax.text(x, y + 0.05, str(i), ha="center", va="center", fontsize=10, color="black")
+        else:
+            ax.text(x, y, str(i), ha="center", va="center", fontsize=10, color="black")
 
-    # Add the "hand" of the clock
+    # Add clock hand for the current age
     angle = 2 * np.pi * current_age / lifespan + np.pi / 2
     ax.plot([0, np.cos(angle)], [0, np.sin(angle)], color="black", linewidth=3)
 
     # Styling
-    ax.set_title("⏳ Circular Life Watch", fontsize=16)
+    ax.set_title("⏳ Circular Life Watch", fontsize=16, pad=20)
     ax.axis("off")  # Hide axes
     return fig
 
@@ -79,7 +93,7 @@ def main():
     with col1:
         # Circular Life Watch visualization
         st.markdown("#### 🕒 Life Visualization")
-        fig = draw_life_watch(current_age, lifespan)
+        fig = draw_real_watch(current_age, lifespan)
         st.pyplot(fig)
 
     with col2:
