@@ -1,6 +1,7 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.patches import Wedge
 
 # Title of the app
 st.title("Life Charging Bar ⚡")
@@ -100,7 +101,7 @@ def create_life_clock(style):
         end_angle = 360 * progress
         
         # Draw the progress ring using Wedge
-        wedge = plt.Wedge(
+        wedge = Wedge(
             center=(0.5, 0.5),
             r=0.4,
             theta1=0,
@@ -112,7 +113,7 @@ def create_life_clock(style):
         ax.add_artist(wedge)
         
         # Draw the remaining time ring
-        remaining_wedge = plt.Wedge(
+        remaining_wedge = Wedge(
             center=(0.5, 0.5),
             r=0.4,
             theta1=end_angle,
